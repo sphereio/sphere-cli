@@ -1,0 +1,11 @@
+Source: sphere-cli-download
+Maintainer: Ops Team <ops@commercetools.de>
+Section: misc
+Priority: optional
+Build-Depends: debhelper (>= 8)
+
+Package: sphere-cli-download
+Architecture: all
+Depends: ${misc:Depends}, sphere-marketing-website
+Description: Command line interface of sphere
+  Package for serving via sphere website.

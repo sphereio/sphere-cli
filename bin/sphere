@@ -1,0 +1,119 @@
+#!/usr/bin/env ruby
+
+require 'pathname'
+
+bin_file = Pathname.new(__FILE__).realpath
+gem_dir = File.expand_path("../../vendor/gems", bin_file)
+if File.directory? gem_dir
+  Dir["#{gem_dir}/**/lib"].each do |libdir|
+    $:.unshift libdir
+  end
+end
+$:.unshift File.expand_path("../../lib", bin_file)
+
+require 'gli'
+include GLI::App
+
+GLI::Commands::Help.skips_pre = false
+
+require 'sphere-cli'
+
+program_desc 'A sphere CLI tool'
+desc 'Shows version information about this tool'
+version Sphere::VERSION
+
+desc 'Enable quiet mode'
+long_desc %(
+  In quiet mode, only data will be printed on the stdout without any human-targeted text.
+)
+switch [:q,:quiet], :negatable => false
+
+desc 'Enable verbose mode'
+switch [:v,:verbose], :negatable => false
+
+desc 'Enable debug mode'
+switch [:d,:debug], :negatable => false
+
+desc 'Use force, do not ask for confirmations on destructive actions'
+switch [:f,:force], :negatable => false
+
+desc 'Do not check for SSL certificates'
+switch [:i,:"ignore-ssl"], :negatable => false
+
+desc 'Output in pretty-printed JSON'
+switch [:j,:"json-pretty"], :negatable => false
+
+desc 'Output in raw JSON'
+switch [:J,:"json-raw"], :negatable => false
+
+desc 'The username to use.'
+arg_name 'email'
+flag [:u,:user]
+
+desc 'The password to use.'
+arg_name 'passwd'
+flag [:p,:password]
+
+desc 'Use specified MC server instead of the default one.'
+arg_name 'url'
+default_value 'https://admin.sphere.io'
+flag [:s,:"mc-server"]
+
+desc 'Use specified WWW server instead of the default one.'
+arg_name 'url'
+default_value 'http://sphere.io'
+flag [:w,:"www-server"]
+
+desc 'Config file to use.'
+arg_name 'file'
+# The order is important. Later files have higher priority and will overwrite values.
+default_value [ '/etc/sphere/config.yaml', '~/.sphere.yaml', '.sphere.yaml' ]
+flag [:config]
+
+require 'gli-extensions'
+include GLI::Extensions
+
+def switch_debug(turn_on)
+  return unless turn_on
+  ENV['GLI_DEBUG'] = "true"
+  ENV['EXCON_DEBUG'] = "true"
+end
+
+def switch_ssl_verification(turn_off)
+  Excon.defaults[:ssl_verify_peer] = false if turn_off
+  # TODO: use sphere.io SSL certificate
+end
+
+pre do |global,command,options,args|
+  puts "Executing command #{command.name}" if global[:v]
+
+  file_config = load_config_files global
+  n2d = name2default switches, flags # returns hash with onluy symbols as keys
+  # Config provided by command line has the highest priority
+  file_config.each do |k,v|
+    next if global[v] and global[v] != n2d[k.to_sym] # use command line if it's different from defaults.
+    global[k] = v
+  end
+
+  switch_debug global[:d]
+  switch_ssl_verification global[:i]
+
+  $quiet = global[:q]
+  $force = global[:f]
+
+  $sphere_client_instance = Sphere::Client.new(Excon.new(global[:s]))
+  $sphere_folder_instance = Sphere::Folder.new
+  $sphere_code_instance = Sphere::Code.new global[:s]
+  $sphere_download_instance = Sphere::Download.new global[:w]
+
+  true
+end
+
+post do |global,command,options,args|
+  puts "Executed command #{command.name}" if global[:v]
+end
+
+sort_help :manually
+commands_from 'sphere-cli/commands'
+
+exit run(ARGV)

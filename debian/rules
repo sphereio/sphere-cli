@@ -1,0 +1,9 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_install:
+	mkdir -p $$(pwd)/debian/sphere-cli-download/usr/share/sphere/www/cli
+	cp install.sh $$(pwd)/debian/sphere-cli-download/usr/share/sphere/www/cli/
+	cp sphere-cli.pkg $$(pwd)/debian/sphere-cli-download/usr/share/sphere/www/cli/
+	cp sphere-cli*.gem $$(pwd)/debian/sphere-cli-download/usr/share/sphere/www/cli/

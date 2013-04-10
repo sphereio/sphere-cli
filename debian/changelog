@@ -1,0 +1,5 @@
+sphere-cli-download (@VERSION@) unstable; urgency=low
+
+  * Packaged sphere-cli tool as debian package to put it in the right place for download.
+
+ -- Ops Team <ops@commercetools.de>  Wed, 10 Apr 2013 11:11:11 +0100

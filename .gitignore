@@ -1,0 +1,11 @@
+.DS_Store
+.sphere/
+.sphere.yaml
+Gemfile.lock
+pkg/
+coverage/
+testresults/
+tmp/
+*.gem
+*.pkg
+*.deb
