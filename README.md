@@ -23,7 +23,7 @@ Sphere CLI provides two kind of tests:
 
 ```
 rake rspec # unit tests
-rake cucucmber # acceptance test
+rake cucumber # acceptance test
 ```
 
 #### Run tests automatically on code changes
