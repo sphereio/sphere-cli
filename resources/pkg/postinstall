@@ -1,0 +1,46 @@
+#!/bin/sh
+
+usershell=$(dscl localhost -read /Local/Default/Users/$USER shell | sed -e 's/[^ ]* //')
+
+startup_files() {
+  case $(basename $usershell) in
+    zsh)
+      echo ".zlogin .zshrc .zprofile .zshenv"
+      ;;
+    bash)
+      echo ".bashrc .bash_profile .bash_login .profile"
+      ;;
+    *)
+      echo ".bash_profile .zshrc .profile"
+      ;;
+  esac
+}
+
+install_path() {
+  for file in $(startup_files); do
+echo "file:$file"
+    [ -f $HOME/$file ] || continue
+    (grep "Added by Sphere" $HOME/$file >/dev/null) && break
+
+cat <<MESSAGE >>$HOME/$file
+
+### Added by Sphere
+export PATH="/usr/local/sphere-cli/bin:\$PATH"
+MESSAGE
+
+    # done after we add to one file
+    break
+done
+}
+
+# if the cli is not returned by `which`, let's add to the PATH
+case $(which sphere) in
+  /usr/bin/sphere|/usr/local/sphere-cli/bin/sphere)
+    ;;
+  *)
+    install_path
+    ;;
+esac
+
+# symlink binary to /usr/bin/sphere
+ln -sf /usr/local/sphere-cli/bin/sphere /usr/bin/sphere

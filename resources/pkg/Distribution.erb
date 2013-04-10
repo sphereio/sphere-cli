@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-script minSpecVersion="1.000000" authoringTool="org.ruby-lang.rake" authoringToolVersion="0.8.7">
+  <title>Sphere Command Line Interface</title>
+  <options customize="allow" allow-external-scripts="no"/>
+  <domains enable_localSystem="true"/>
+  <choices-outline>
+    <line choice="sphere-cli"/>
+  </choices-outline>
+  <choice id="sphere-cli" title="Sphere Command Line Interface">
+    <pkg-ref id="io.sphere.cli"/>
+    <pkg-ref id="org.ruby-lang.installer"/>
+  </choice>
+  <pkg-ref id="io.sphere.cli" installKBytes="<%= kbytes %>" version="<%= version %>" auth="Root">#sphere-cli.pkg</pkg-ref>
+  <pkg-ref id="org.ruby-lang.installer" installKBytes="9132" auth="Root">#ruby.pkg</pkg-ref>
+</installer-script>
