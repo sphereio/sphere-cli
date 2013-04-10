@@ -46,6 +46,7 @@ RSpec::Core::RakeTask.new(:rspec) do |t|
     t.rspec_path = "rspec1.9.1"
   end
 end
+task :default => :rspec
 
 def version
   rake_file = Pathname.new(__FILE__).realpath
@@ -79,7 +80,6 @@ task :perform_release do
   sh "git push origin master"
 end
 
-task :default => [:test,:features]
 
 ### package as pkg - works on Mac OS only!
 
