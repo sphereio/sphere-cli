@@ -39,12 +39,6 @@ RSpec::Core::RakeTask.new(:rspec) do |t|
   t.rspec_opts = [ '--format', 'html', '-o', RSPEC_HTML_RESULTS,
                    '-r', 'rspec_junit_formatter', '--format', 'RspecJunitFormatter', '-o', RSPEC_JUNIT_RESULTS,
                    '--format', 'nested', '--color', '--tag', '~skip' ]
-
-  if RbConfig::CONFIG['host_os'] =~ /mac|darwin/
-    t.rspec_path = "rspec"
-  else
-    t.rspec_path = "rspec1.9.1"
-  end
 end
 task :default => :rspec
 
