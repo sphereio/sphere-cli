@@ -1,9 +1,9 @@
 sphere-cli
 ==========
 
-The Command Line Interface (CLI) to [Sphere.IO](http://sphere.io).
+The Command Line Interface (CLI) to [Sphere.IO](http://sphere.io)
 
-Have a look at the [developer documentation](http://dev.sphere.io/CLI.html).
+Have a look at the [developer documentation](http://dev.sphere.io/CLI.html)
 
 ## Development
 
