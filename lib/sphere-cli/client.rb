@@ -73,7 +73,7 @@ module Sphere
                                       'User-Agent' => USER_AGENT,
                                       'Content-Type' => 'application/x-www-form-urlencoded'
                                     },
-                                    :body => "name=#{CGI::escape(name)}&email=#{CGI::escape(username)}&password=#{CGI::escape(password)}")
+                                    :body => "name=#{CGI::escape(name)}&email=#{CGI::escape(username)}&password=#{CGI::escape(password)}&browser=sphere")
 
       return checkLoginSignupResponse username
     end
@@ -84,7 +84,7 @@ module Sphere
                                       'User-Agent' => USER_AGENT,
                                       'Content-Type' => 'application/x-www-form-urlencoded'
                                     },
-                                    :body => "email=#{CGI::escape(username)}&password=#{CGI::escape(password)}")
+                                    :body => "email=#{CGI::escape(username)}&password=#{CGI::escape(password)}&browser=sphere")
       return checkLoginSignupResponse username
     end
 
