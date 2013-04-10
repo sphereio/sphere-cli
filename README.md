@@ -7,6 +7,8 @@ Have a look at the [developer documentation](http://dev.sphere.io/CLI.html)
 
 ## Development
 
+[![Build Status](https://travis-ci.org/commercetools/sphere-cli.png)](https://travis-ci.org/commercetools/sphere-cli)
+
 Getting started by using `bundler` to get all necessary dependencies:
 ```
 gem install bundler
