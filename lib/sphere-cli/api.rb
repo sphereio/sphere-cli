@@ -15,7 +15,7 @@ module Sphere
     # PROJECTS
     def projects_list_url() '/api/projects' end
     def project_create_url() projects_list_url end
-    def project_bootstrap_url(project_key) "/#{project_key}/bootstrap" end
+    def project_sample_data_url(project_key) "/api/#{project_key}/sample-data" end
     def project_details_url(project_key) "#{projects_list_url}/#{project_key}" end
     def project_delete_url(project_key) project_details_url project_key end
 

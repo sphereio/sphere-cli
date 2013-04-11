@@ -94,10 +94,10 @@ module Sphere
         puts "clientSecret: #{data['client']['secret']}"
       end
 
-      return unless options[:bootstrap]
+      return unless options[:'sample-data']
       printStatusLine "Creating sample data... "
-      res = sphere.get project_bootstrap_url(project_key)
-      sphere.ensure2XX "Adding bootstrap data to new project failed"
+      res = sphere.post project_sample_data_url(project_key), ''
+      sphere.ensure2XX "Adding sample data to new project failed"
       printMsg "Done, enjoy!"
     end
 

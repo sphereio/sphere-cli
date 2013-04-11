@@ -100,8 +100,11 @@ module Sphere
         Excon.stub(
           { :method => :put, :path => '/api/projects/p', :body => '{"key":"p","version":2,"actions":[{"action":"setCountries","countries":["DE"]}]}' },
           { :status => 200 })
+        Excon.stub(
+          { :method => :post, :path => '/api/p/sample-data' },
+          { :status => 200 })
 
-        expect { @proj.create ['p'], { :l => 'de,en', :m => 'YEN', :c => 'DE' }, {} }.not_to raise_error
+        expect { @proj.create ['p'], { :l => 'de,en', :m => 'YEN', :c => 'DE', :'sample-data' => true }, { } }.not_to raise_error
       end
     end
     describe '#delete' do

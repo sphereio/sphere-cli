@@ -19,7 +19,7 @@ command [:project, :projects] do |c|
     create.flag [:c], :desc => 'Countries to add to project', :arg_name => 'country,country', :default_value => 'DE'
     create.flag [:m], :desc => 'Currencies to add to project', :arg_name => 'currency,currency', :default_value => 'EUR'
     create.flag [:l], :desc => 'Languages to add to project', :arg_name => 'lang,lang', :default_value => 'en'
-    create.switch [:bootstrap], :desc => 'Bootstrap new project with sample data'
+    create.switch [:'sample-data'], :desc => 'Add some sample data to new project', :negatable => false
     create.action do |global_options,options,args|
       sphere.ensureLoggedIn
       Sphere::Projects.new.create args, options, global_options
