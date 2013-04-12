@@ -250,6 +250,10 @@ Sommer,Women,Shirts,T-Shirts,
           @cat.name2id['subcategory'].should eq '2-1'
           @cat.name2id['myRoot-2'].should eq '2'
           @cat.duplicate_names.size.should be 0
+          @cat.fq_cat2id.size.should be 3
+          @cat.fq_cat2id[['myRoot']].should eq '1'
+          @cat.fq_cat2id[['myRoot-2']].should eq '2'
+          @cat.fq_cat2id[["myRoot-2", "subcategory"]].should eq '2-1'
         end
       end
     end

@@ -93,7 +93,7 @@ module Sphere
       it 'category name is not unique' do
         Excon.stub(
           { :method => :get, :path => '/api/proj/categories' },
-          { :status => 200, :body => '[{"subCategories":[{"subCategories":[{"subCategories":[],"id":"inner","name":"myCat"}],"id":"middle","name":"myCat"}],"name":"rootCategory"}]' })
+          { :status => 200, :body => '[{"subCategories":[{"subCategories":[{"subCategories":[],"id":"inner","name":"myCat"}],"id":"middle","name":"myCat"}],"id":"root","name":"rootCategory"}]' })
 
         cat_impl = Sphere::Catalogs.new 'proj'
         cat_impl.fetch_all
@@ -102,9 +102,15 @@ module Sphere
         h2i = { 'categories' => 0 }
         d = { :errors => [] }
         cat_ids = @prod.validate_categories rows[0], 4, h2i, d, cat_impl
-        cat_ids.size.should eq 0
+        cat_ids.should eq ''
         d[:errors].size.should eq 1
         d[:errors][0].should eq "[row 4] Category with name 'myCat' is not unique. Please use the category's id instead. One of middle, inner"
+
+        rows = CSV.parse 'rootCategory>myCat;rootCategory>myCat>myCat;rootCategory;middle'
+        d = { :errors => [] }
+        cat_ids = @prod.validate_categories rows[0], 9, h2i, d, cat_impl
+        d[:errors].size.should be 0
+        cat_ids.should eq 'middle;inner;root;middle'
       end
     end
     describe '#validate_categories' do

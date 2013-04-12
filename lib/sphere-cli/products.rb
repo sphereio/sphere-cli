@@ -7,6 +7,7 @@ module Sphere
     COLUMNS_IGNORED = ['masterVariant', 'id', 'version', 'productType', 'taxCategory', 'name', 'categories', 'variants', 'hasStagedChanges', 'published']
     VARIANT_COLUMNS_IGNORED = ['id', 'prices', 'images', 'attributes']
     VALUES_DELIM = ';'
+    CATEGORY_CHILD_DELIM = '>'
 
     def initialize(project_key, global_options, tax_impl = Sphere::Taxes.new(project_key))
       @sphere_project_key = project_key
@@ -305,8 +306,15 @@ module Sphere
       cat_ids = []
       cats.each do |c|
         if cat_impl.id2version.has_key? c
-          cats_ids = cat_impl.id2version c
+          cat_ids << c
           next
+        end
+        fq = c.split CATEGORY_CHILD_DELIM
+        if fq.size > 1
+          if cat_impl.fq_cat2id.has_key? fq
+            cat_ids << cat_impl.fq_cat2id[fq]
+            next
+          end
         end
         if not cat_impl.name2id.has_key? c
           data[:errors] << "[row #{row_index}] Category with name '#{c}' does not exist."

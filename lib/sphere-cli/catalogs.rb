@@ -5,12 +5,14 @@ module Sphere
     attr_reader :duplicate_names
     attr_reader :name2id
     attr_reader :id2version
+    attr_reader :fq_cat2id
 
     ACTIONS = [nil, '', 'create','changeName'] # TODO: add delete
 
     def initialize(project_key)
       @sphere_project_key = project_key
       @categories = []
+      @fq_cat2id = {}
       @id2version = {}
       @duplicate_names = {}
       @name2id = {}
@@ -83,26 +85,30 @@ module Sphere
     end
 
     def fill_maps
-      id2version_categories @categories
+      id2version_categories @categories, []
     end
 
-    def id2version_categories(categories)
+    def id2version_categories(categories, parents)
       categories.each do |c|
-        @id2version[c['id']] = c['version']
-        add_name2id c
-        id2version_categories c['subCategories']
+        id = c['id']
+        @id2version[id] = c['version']
+        n = add_name2id(c, id)
+        fq = parents + [n]
+        @fq_cat2id[fq] = id
+        id2version_categories c['subCategories'], fq
       end
     end
 
-    def add_name2id(c)
+    def add_name2id(c, id)
       n = c['name']
       if @name2id.has_key? n
         if not @duplicate_names.has_key? n
           @duplicate_names[n] = [ @name2id[n] ]
         end
-        @duplicate_names[n] << c['id']
+        @duplicate_names[n] << id
       end
-      @name2id[n] = c['id']
+      @name2id[n] = id
+      n
     end
 
     def import(input)
