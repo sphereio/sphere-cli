@@ -21,13 +21,17 @@ module Sphere
 
     def details(args, global_options)
       project_key = get_project_key args
-      res = sphere.get project_details_url project_key
+      res = sphere.get projects_list_url
       sphere.ensure2XX "Can't get details of project with key '#{project_key}'"
       performJSONOutput global_options, res do |data|
-        raise "Project with key '#{project_key}' does not exist." if data.empty?
-        puts "id: #{data['id']}"
-        puts "Name: #{data['name']}"
-        puts "Key: #{data['key']}"
+        data.each do |d|
+          next unless d['key'] == project_key
+          puts "id: #{d['id']}"
+          puts "Name: #{d['name']}"
+          puts "Key: #{d['key']}"
+          return d
+        end
+        raise "Project with key '#{project_key}' does not exist."
       end
     end
 

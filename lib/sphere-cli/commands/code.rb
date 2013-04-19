@@ -18,11 +18,8 @@ command :code do |c|
   c.command :configure do |configure|
     configure.action do |global_options,options,args|
       project_key = get_project_key options
-      sphere.ensureLoggedIn
-      url = project_details_url project_key
-      res = sphere.get url
-      sphere.ensure2XX
-      code.configure parse_JSON(res)
+      json = Sphere::Projects.new.details args, { :quiet => true }
+      code.configure json
     end
   end
 

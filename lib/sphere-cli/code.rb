@@ -38,6 +38,7 @@ module Sphere
 
     def configure json
       fn = 'conf/application.conf'
+      printStatusLine "Configuring application via '#{fn}'... "
       c = File.read fn
       File.open fn, 'w' do |file|
         c.gsub!(/^sphere.project=.*$/, "sphere.project=\"#{json['key']}\"")
@@ -54,6 +55,7 @@ module Sphere
         end
         file.puts c
       end
+      printMsg "Done"
     end
   end
 end

@@ -18,10 +18,17 @@ module Sphere
         expect { @proj.select ['some-project'], {} }.to_not raise_error
         File.should be_file File.join '.sphere', 'project'
       end
-      it 'fails of given project_key does not exists' do
+      it 'fails if there are no projects' do
         Excon.stub(
           { :method => :get, :path => '/api/projects' },
           { :status => 200, :body => '[]' })
+
+        expect { @proj.select ['project-xyz'], {} }.to raise_error "Project with key 'project-xyz' does not exist."
+      end
+      it 'fails if given project_key does not exists' do
+        Excon.stub(
+          { :method => :get, :path => '/api/projects' },
+          { :status => 200, :body => '[{},{},{}]' })
 
         expect { @proj.select ['project-xyz'], {} }.to raise_error "Project with key 'project-xyz' does not exist."
       end
@@ -33,15 +40,15 @@ module Sphere
       end
       it 'no project' do
         Excon.stub(
-          { :method => :get, :path => '/api/projects/some-project' },
+          { :method => :get, :path => '/api/projects' },
           { :status => 200, :body => '[]' })
 
         expect { @proj.details ['some-project'], {} }.to raise_error "Project with key 'some-project' does not exist."
       end
       it 'just works' do
         Excon.stub(
-          { :method => :get, :path => '/api/projects/p' },
-          { :status => 200, :body => '{"id":"1","key":"p","name":"P"}' })
+          { :method => :get, :path => '/api/projects' },
+          { :status => 200, :body => '[{"id":"1","key":"p","name":"P"}]' })
 
         expect { @proj.details ['p'], {} }.to_not raise_error
       end

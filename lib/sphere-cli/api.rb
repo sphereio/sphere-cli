@@ -16,11 +16,10 @@ module Sphere
     def projects_list_url() '/api/projects' end
     def project_create_url() projects_list_url end
     def project_sample_data_url(project_key) "/api/#{project_key}/sample-data" end
-    def project_details_url(project_key) "#{projects_list_url}/#{project_key}" end
-    def project_delete_url(project_key) project_details_url project_key end
+    def project_delete_url(project_key) "#{projects_list_url}/#{project_key}" end
 
     # COUNTRY and TAXES
-    def project_add_countries_url(project_key) project_details_url project_key end
+    def project_add_countries_url(project_key) "#{projects_list_url}/#{project_key}" end
     def project_tax_categories_url(project_key) "/api/#{project_key}/tax-categories" end
     def project_add_tax_category(project_key) project_tax_categories_url project_key end
     def project_add_tax_rate_url(project_key, tax_category_id) "/api/#{project_key}/tax-categories/#{tax_category_id}" end
