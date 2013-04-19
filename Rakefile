@@ -55,6 +55,7 @@ desc "Publishes gem to rubygems.org and bumps version"
 task :perform_release do
   puts "Updating master..."
   sh "git checkout master && git pull" # This is necessary as Jenkins builds on individual commits and not master.
+  sh "git tag -d ${BUILD_TAG}" # Delete jenkins tag
 
   puts "rake release..."
   Rake::Task["release"].execute # This sucks on jenkins as it pushes all jenkins build tags
