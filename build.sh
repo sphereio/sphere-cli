@@ -6,7 +6,7 @@ run_tests() {
 }
 
 get_pkg() {
-    wget -O sphere-cli.pkg -nv "${JENKINS_URL}job/sphere-cli-on-mac/ws/cli/sphere-cli.pkg"
+    wget -O sphere-cli.pkg -nv "${JENKINS_URL}job/sphere-cli-on-mac/ws/sphere-cli.pkg"
 }
 
 revert_git_changes() {
