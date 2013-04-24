@@ -1,0 +1,8 @@
+---
+plain: --no-profile
+failfast: FAIL_FAST=true
+sbs: STEP_BY_STEP=true
+auto: --tags ~@interactive --tags ~@wip
+<% ws = ENV['WORKSPACE'].nil? ? "." : ENV['WORKSPACE'] %>
+ci: --profile auto --strict --quiet --color --format pretty --format junit --out <%= ws %>/results --format html --out <%= ws %>/result.html --format rerun --out <%= ws %>/rerun.txt --format usage --out <%= ws %>/usage.colored.txt
+debug: --format debug --backtrace --verbose
