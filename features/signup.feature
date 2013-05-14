@@ -4,12 +4,12 @@ Feature: Signup to Sphere using the command line tool
   Scenario: Signup and delete of account interactivly works
     When I run `sphere signup` interactively
     When I type "Horst mal wieder"
-    When I type "cli-testing-signup@example.com"
+    When I type "webtests+cli-testing-signup@commercetools.de"
     When I type "secret"
     Then the exit status should be 0
-    And I should be logged in as "cli-testing-signup@example.com"
+    And I should be logged in as "webtests+cli-testing-signup@commercetools.de"
     When I run `sphere account delete` interactively
-    When I type "cli-testing-signup@example.com"
+    When I type "webtests+cli-testing-signup@commercetools.de"
     Then the exit status should be 0
     And I should not be logged in
 
