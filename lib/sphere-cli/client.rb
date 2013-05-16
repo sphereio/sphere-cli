@@ -170,17 +170,14 @@ module Sphere
     end
 
     def ensure2XX(errorMessage = 'Communitcation problem')
-      e = @response.headers
+      h = @response.headers
+      e = 'No further information available'
       begin
         e = parse_JSON @response.body
       rescue
-        if @response.body.nil? or @response.body.empty?
-          e = 'No further information available'
-        else
-          e = "Response body: #{@response.body}"
-        end
+        e = "Response body: #{@response.body}" if response.body
       end
-      raise "#{errorMessage}: server returned with status '#{@response.status}':\n  #{e}" unless is2XX
+      raise "#{errorMessage}: server returned with status '#{@response.status}':\n  headers: #{h}\n  message: #{e}" unless is2XX
     end
 
     def ensure2XX3XX(errorMessage="Server returned #{@response.status}")
