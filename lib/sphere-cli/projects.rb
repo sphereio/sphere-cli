@@ -85,6 +85,7 @@ module Sphere
       d = { :name => project_key, :key => project_key, :owner => { :typeId => 'organization', :id => org_id } }
       d[:languages] = get_list options[:l]
       d[:currencies] = get_list options[:m]
+      d[:plan] = 'Medium' # TODO: specify via command line arg
       url = project_create_url
       res = sphere.post url, d.to_json
       sphere.ensure2XX "Project creation failed"

@@ -102,7 +102,7 @@ module Sphere
           { :method => :get, :path => '/api/organizations' },
           { :status => 200, :body => '[{"id":"org"}]' })
         Excon.stub(
-          { :method => :post, :path => '/api/projects', :body => '{"name":"p","key":"p","owner":{"typeId":"organization","id":"org"},"languages":["de","en"],"currencies":["YEN"]}' },
+          { :method => :post, :path => '/api/projects', :body => '{"name":"p","key":"p","owner":{"typeId":"organization","id":"org"},"languages":["de","en"],"currencies":["YEN"],"plan":"Medium"}' },
           { :status => 200, :body => '{"project":{"key":"p"},"client":{"id":"123","secret":"geheim"}}' })
         Excon.stub(
           { :method => :put, :path => '/api/projects/p', :body => '{"key":"p","version":2,"actions":[{"action":"setCountries","countries":["DE"]}]}' },
