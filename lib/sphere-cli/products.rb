@@ -434,7 +434,7 @@ module Sphere
       tax_id = get_val product, 'tax', h2i
 
       d = {}
-      d[:productType] = { :id => product_type['id'], :typeId => 'productDefinition' }
+      d[:productType] = { :id => product_type['id'], :typeId => 'product-type' }
       d[:taxCategory] = { :id => tax_id, :typeId => 'tax-category' }
       d[:name] = name
       d[:slug] = slug

@@ -25,7 +25,7 @@ def create_product(product, pt)
     end
   end
   raise 'No product type id found.' unless id
-  json = '\'{"name":"%s","slug":"some-slug","productType":{"id":"%s","typeId":"productDefinition"},"attributes":[]}\'' % [ product, id ]
+  json = '\'{"name":"%s","slug":"some-slug","productType":{"id":"%s","typeId":"product-type"},"attributes":[]}\'' % [ product, id ]
   run_simple "sphere products create #{json}", true, @aruba_timeout_seconds
   number_of_products? 1
 end

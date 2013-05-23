@@ -167,7 +167,7 @@ module Sphere
       end
       it 'simple product' do
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/products', :body => '{"productType":{"id":"123","typeId":"productDefinition"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":"myProd","slug":"myprod","masterVariant":{"attributes":[]},"variants":[]}' },
+          { :method => :post, :path => '/api/myProject/products', :body => '{"productType":{"id":"123","typeId":"product-type"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":"myProd","slug":"myprod","masterVariant":{"attributes":[]},"variants":[]}' },
           { :status => 200, :body => '{"id":"abc","version":1}' })
         Excon.stub(
           { :method => :put, :path => '/api/myProject/products/abc', :body => '{"id":"abc","version":1,"actions":[{"action":"publish"}]}' },
@@ -183,7 +183,7 @@ myProd,pt,t1
         @prod.import_data d
       end
       it 'product with variants' do
-        body = '{"productType":{"id":"123","typeId":"productDefinition"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":"my Prod","slug":"my-prod","masterVariant":{"prices":[{"value":{"currencyCode":"EUR","centAmount":100}}],"attributes":[]},"variants":'
+        body = '{"productType":{"id":"123","typeId":"product-type"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":"my Prod","slug":"my-prod","masterVariant":{"prices":[{"value":{"currencyCode":"EUR","centAmount":100}}],"attributes":[]},"variants":'
         body << '[{"prices":[{"value":{"currencyCode":"USD","centAmount":9999}}],"attributes":[]},{"prices":[{"value":{"currencyCode":"GBP","centAmount":123}}],"attributes":[]}]'
         body << '}'
         Excon.stub(
