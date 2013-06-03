@@ -30,7 +30,7 @@ end
 After do
   if $user
     login_with_secret $user
-    run_simple "sphere -f project delete #{$project}", false, @aruba_timeout_seconds if $project
+    run_simple "sphere -f project delete #{$project}", false, @aruba_timeout_seconds * 3 if $project
   end
   ENV['RUBYLIB'] = @original_rubylib
   FileUtils.rm_rf @temp_dir
