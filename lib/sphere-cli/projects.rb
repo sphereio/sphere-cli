@@ -89,8 +89,9 @@ module Sphere
       url = project_create_url
       res = sphere.post url, d.to_json
       sphere.ensure2XX "Project creation failed"
+      j = parse_JSON res
 
-      add_country parse_JSON(res)['project']['key'], 2, options[:c]
+      add_country j['project']['key'], j['project']['version'], options[:c]
 
       printMsg "Done"
       performJSONOutput global_options, res do |data|
