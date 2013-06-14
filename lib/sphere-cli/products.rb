@@ -394,6 +394,7 @@ module Sphere
       id = j['id']
       product_ids << id
       if images_data[:images].size > 0
+        images_data[:id] = id
         sphere.post product_images_import_url(@sphere_project_key, id), images_data.to_json
         sphere.ensure2XX "Problems on importing images for product '#{id}'"
       end
