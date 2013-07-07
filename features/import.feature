@@ -8,7 +8,7 @@ Feature: Import product data via CSV files
       "name":"myPT"
       ,"description":"Some more information"
       ,"attributes":[
-        { "name":"size","label":"size","type":"text","isVariant":true,"isRequired":true,"inputHint":"SingleLine" }
+        { "name":"size","label":{"en":"size"},"type":"text","isVariant":true,"isRequired":true,"inputHint":"SingleLine" }
       ]
     }
     """

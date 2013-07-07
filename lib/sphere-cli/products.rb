@@ -146,9 +146,14 @@ module Sphere
         row = [''] # action
         row << p['id'].to_s
         row << jsonValue(p, %w(productType id))
-        row << jsonValue(p, %w(name))
+        row << lang_val(p['name'])
         base_columns.each do |c|
-          row << p[c].to_s
+          v = p[c]
+          if v.class == Hash
+            row << lang_val(v)
+          else
+            row << v.to_s
+          end
         end
         row << add_categories(p)
         row << jsonValue(p, %w(masterVariant id))
@@ -437,9 +442,9 @@ module Sphere
       d = {}
       d[:productType] = { :id => product_type['id'], :typeId => 'product-type' }
       d[:taxCategory] = { :id => tax_id, :typeId => 'tax-category' }
-      d[:name] = name
-      d[:slug] = slug
-      d[:description] = desc if desc
+      d[:name] = lang_val name
+      d[:slug] = lang_val slug
+      d[:description] = lang_val desc if desc
       d.merge! cats if cats
       d[:masterVariant] = variant_json_data(product, h2i, product_type)
       d[:variants] = []

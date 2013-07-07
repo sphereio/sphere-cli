@@ -38,7 +38,7 @@ module Sphere
         pt = { 'id' => 'abc', 'attributes' => [] }
         d = @prod.create_product_json_data rows[0], h2i, pt
         j = JSON.parse d.to_json
-        j['name'].should eq 'myProd'
+        j['name']['en'].should eq 'myProd'
         j['productType']['id'].should eq 'abc'
       end
       it 'variant' do
@@ -93,7 +93,7 @@ module Sphere
       it 'category name is not unique' do
         Excon.stub(
           { :method => :get, :path => '/api/proj/categories' },
-          { :status => 200, :body => '[{"subCategories":[{"subCategories":[{"subCategories":[],"id":"inner","name":"myCat"}],"id":"middle","name":"myCat"}],"id":"root","name":"rootCategory"}]' })
+          { :status => 200, :body => '[{"subCategories":[{"subCategories":[{"subCategories":[],"id":"inner","name":{"en":"myCat"}}],"id":"middle","name":{"en":"myCat"}}],"id":"root","name":{"en":"rootCategory"}}]' })
 
         cat_impl = Sphere::Catalogs.new 'proj'
         cat_impl.fetch_all
@@ -167,7 +167,7 @@ module Sphere
       end
       it 'simple product' do
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/products', :body => '{"productType":{"id":"123","typeId":"product-type"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":"myProd","slug":"myprod","masterVariant":{"attributes":[]},"variants":[]}' },
+          { :method => :post, :path => '/api/myProject/products', :body => '{"productType":{"id":"123","typeId":"product-type"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":{"en":"myProd"},"slug":{"en":"myprod"},"masterVariant":{"attributes":[]},"variants":[]}' },
           { :status => 200, :body => '{"id":"abc","version":1}' })
         Excon.stub(
           { :method => :put, :path => '/api/myProject/products/abc', :body => '{"id":"abc","version":1,"actions":[{"action":"publish"}]}' },
@@ -183,7 +183,7 @@ myProd,pt,t1
         @prod.import_data d
       end
       it 'product with variants' do
-        body = '{"productType":{"id":"123","typeId":"product-type"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":"my Prod","slug":"my-prod","masterVariant":{"prices":[{"value":{"currencyCode":"EUR","centAmount":100}}],"attributes":[]},"variants":'
+        body = '{"productType":{"id":"123","typeId":"product-type"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":{"en":"my Prod"},"slug":{"en":"my-prod"},"masterVariant":{"prices":[{"value":{"currencyCode":"EUR","centAmount":100}}],"attributes":[]},"variants":'
         body << '[{"prices":[{"value":{"currencyCode":"USD","centAmount":9999}}],"attributes":[]},{"prices":[{"value":{"currencyCode":"GBP","centAmount":123}}],"attributes":[]}]'
         body << '}'
         Excon.stub(
@@ -273,7 +273,7 @@ delete,123,,,
       it 'simple product' do
         Excon.stub(
           { :method => :get, :path => '/api/myProject/products' },
-          { :status => 200, :body => '{"count":1,"offset":0,"total":1,"results":[{"id":"abc","productType":{"id":"pt"},"name":"myProd","masterVariant":{"attributes":[],"images":[]},"categories":[],"variants":[]}]}' })
+          { :status => 200, :body => '{"count":1,"offset":0,"total":1,"results":[{"id":"abc","productType":{"id":"pt"},"name":{"en":"myProd"},"masterVariant":{"attributes":[],"images":[]},"categories":[],"variants":[]}]}' })
         @prod.fetch_all
         h,r = @prod.export_csv
         h.size.should be 7
@@ -332,7 +332,9 @@ delete,123,,,
             "typeId":"product-type",
             "id":"2e7f452a-c428-42c1-90c5-9a90840b78b0"
         },
-        "name":"BMW M7 2 door",
+        "name":{
+            "en":"BMW M7 2 door"
+        },
         "description":"Some\\nMulti\\nLine\\nText",
         "categories":[
             {
