@@ -9,7 +9,7 @@ module Sphere
       it 'catalog should have no parent' do
         t = @cat.create_json_data 'foo', [], 0, 0
         j = JSON.parse t
-        j['name'].should eq 'foo'
+        j['name']['en'].should eq 'foo'
       end
       it 'category should have parent' do
         p = ['123']
@@ -27,7 +27,7 @@ module Sphere
         j['version'].should eq 3
         j['actions'].size.should eq 1
         j['actions'][0]['action'].should eq 'changeName'
-        j['actions'][0]['name'].should eq 'myCat'
+        j['actions'][0]['name']['en'].should eq 'myCat'
       end
     end
     describe '#validate_rows' do
@@ -82,7 +82,7 @@ module Sphere
         it 'just works' do
           Excon.stub(
             { :method => :get, :path => '/api/myProject/categories' },
-            { :status => 200, :body => '[{"name":"myCat","id":"123"}]' })
+            { :status => 200, :body => '[{"name":{"en":"myCat"},"id":"123"}]' })
 
           o, e = capture_outs{ @cat.list({}) }
           o.should match /^myCat: 123/
@@ -90,7 +90,7 @@ module Sphere
       end
       it 'root category creation' do
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":"myRoot"}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"myRoot"}}' },
           { :status => 200, :body => '{"id":"123","rootCategory":{"id":"abc"}}' })
 
         r = <<-eos
@@ -139,11 +139,11 @@ create,,myRoot,,
       it 'change a category name' do
         Excon.stub(
           { :method => :get, :path => '/api/myProject/categories' },
-          { :status => 200, :body => '[{"subCategories":[{"subCategories":[],"id":"123","version":7,"name":"bar","parent":{"id":"abc"}}]}]' })
+          { :status => 200, :body => '[{"subCategories":[{"subCategories":[],"id":"123","version":7,"name":{"en":"bar"},"parent":{"id":"abc"}}]}]' })
         @cat.fetch_all
 
         Excon.stub(
-          { :method => :put, :path => '/api/myProject/categories/123', :body => '{"id":"123","version":7,"actions":[{"action":"changeName","name":"foo"}]}' },
+          { :method => :put, :path => '/api/myProject/categories/123', :body => '{"id":"123","version":7,"actions":[{"action":"changeName","name":{"en":"foo"}}]}' },
           { :status => 200, :body => '{}' })
 
         r = <<-eos
@@ -165,43 +165,43 @@ changeName,123,,foo,
           { :status => 200, :body => '[]' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":"Winter"}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Winter"}}' },
           { :status => 200, :body => '{"id":"1"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":"Men","parent":{"id":"1","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Men"},"parent":{"id":"1","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"2"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":"Sommer"}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Sommer"}}' },
           { :status => 200, :body => '{"id":"3"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":"Women","parent":{"id":"3","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Women"},"parent":{"id":"3","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"4"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":"Shirts","parent":{"id":"4","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Shirts"},"parent":{"id":"4","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"5"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":"T-Shirts","parent":{"id":"5","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"T-Shirts"},"parent":{"id":"5","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"6"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":"Hats","parent":{"id":"4","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Hats"},"parent":{"id":"4","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"7"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":"Shoes","parent":{"id":"4","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Shoes"},"parent":{"id":"4","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"8"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":"Girls","parent":{"id":"3","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Girls"},"parent":{"id":"3","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"9"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":"Shoes","parent":{"id":"9","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Shoes"},"parent":{"id":"9","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"10"}' })
 
         r = <<-eos
@@ -233,7 +233,7 @@ Sommer,Women,Shirts,T-Shirts,
         it 'some categories' do
           Excon.stub(
             { :method => :get, :path => '/api/myProject/categories' },
-            { :status => 200, :body => '[{"subCategories":[],"id":"1","name":"myRoot"},{"subCategories":[{"subCategories":[],"id":"2-1","name":"subcategory"}],"id":"2","name":"myRoot-2"}]' })
+            { :status => 200, :body => '[{"subCategories":[],"id":"1","name":{"en":"myRoot"}},{"subCategories":[{"subCategories":[],"id":"2-1","name":{"en":"subcategory"}}],"id":"2","name":{"en":"myRoot-2"}}]' })
 
           h, r = @cat.export
           h.size.should be 4

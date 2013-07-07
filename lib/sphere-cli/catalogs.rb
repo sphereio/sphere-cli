@@ -27,7 +27,7 @@ module Sphere
           return
         end
         data.each do |c|
-          puts "#{c['name']}: #{c['id']}"
+          puts "#{lang_val(c['name'])}: #{c['id']}"
         end
       end
     end
@@ -77,7 +77,7 @@ module Sphere
         row = [''] # id
         row << cat['id']
         row = row + ([''] * level) # put category in right column
-        row << cat['name']
+        row << lang_val(cat['name'])
         rows << row
         rows = rows + categories2text(cat['subCategories'], level + 1)
       end
@@ -100,7 +100,7 @@ module Sphere
     end
 
     def add_name2id(c, id)
-      n = c['name']
+      n = lang_val c['name']
       if @name2id.has_key? n
         if not @duplicate_names.has_key? n
           @duplicate_names[n] = [ @name2id[n] ]
@@ -225,12 +225,12 @@ module Sphere
 
     def update_json_data(id, version, name)
       d = { :id => id, :version => version }
-      d[:actions] = [{ :action => 'changeName', :name => name }]
+      d[:actions] = [{ :action => 'changeName', :name => lang_val(name) }]
       d.to_json
     end
 
     def create_json_data(name, current_parents, column_index, root_index)
-      d = { :name => name }
+      d = { :name => lang_val(name) }
       if column_index > root_index
         p_id = current_parents[column_index - 1]
         d[:parent] = { :id => p_id, :typeId => 'category' }

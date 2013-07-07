@@ -52,6 +52,12 @@ module Sphere
       end
     end
 
+    def lang_val(value)
+      language = 'en'
+      return value[language] if value.class == Hash
+      { language.to_sym => value }
+    end
+
     # Obtain a value from the specified JSON object following a path of
     # attribute names (i.e. go deeper into each attribute) specified in attribPath
     # (an array of strings).
