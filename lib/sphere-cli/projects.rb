@@ -63,16 +63,20 @@ module Sphere
           return
         end
         index = -1
-        if (options[:org])
+        if (options[:o])
           # explicitly passed organization name as an argument, let's check if it exists
-          index = data.index { |o| o['name'] == options[:org] }
-          raise "Organization '#{options[:org]}' does not exist." unless index
+          index = data.index { |o| o['name'] == options[:o] }
+          raise "Organization '#{options[:o]}' does not exist." unless index
         else
           if (data.length == 1)
             # just one organization, let's use it
             index = 0
           else
-            raise 'There are more than one organization. Please specify which organization to create the new project for.'
+            puts 'There are more than one organization:'
+            data.each do |o|
+              puts "  name: #{o['name']}, id: #{o['id']}"
+            end
+            raise 'Please specify which organization to create the new project for.'
           end
         end
         org = data[index]
