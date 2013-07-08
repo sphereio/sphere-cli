@@ -8,7 +8,7 @@ command [:account] do |c|
   c.command [:details] do |details|
     details.action do |global_options,options,args|
       sphere.ensureLoggedIn
-      Sphere::Account.new.details
+      Sphere::Account.new.details global_options
     end
   end
 
