@@ -88,14 +88,14 @@ module Sphere
           { :method => :get, :path => '/api/organizations' },
           { :status => 200, :body => '[{},{}]' })
 
-        expect { @proj.create ['p'], {}, {} }.to raise_error 'There are more than one organization. Please specify which organization to create the new project for.'
+        expect { @proj.create ['p'], {}, {} }.to raise_error 'Please specify which organization to create the new project for.'
       end
       it 'my org does not exists' do
         Excon.stub(
           { :method => :get, :path => '/api/organizations' },
           { :status => 200, :body => '[{"name":"SomeOrg"},{"name":"NotMyOrg"}]' })
 
-        expect { @proj.create ['p'], { :org => 'myOrg' }, {} }.to raise_error "Organization 'myOrg' does not exist."
+        expect { @proj.create ['p'], { :o => 'myOrg' }, {} }.to raise_error "Organization 'myOrg' does not exist."
       end
       it 'just works' do
         Excon.stub(
