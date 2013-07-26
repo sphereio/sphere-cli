@@ -425,10 +425,6 @@ module Sphere
       return true if (n.nil? or n.empty?) and (pt.nil? or pt.empty?) and not v.empty?
     end
 
-    def slugify(name)
-      name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
-    end
-
     def create_product_json_data(product, h2i, product_type)
       name = get_val product, 'name', h2i
       slug = get_val product, 'slug', h2i

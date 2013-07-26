@@ -90,7 +90,7 @@ module Sphere
       end
       it 'root category creation' do
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"myRoot"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"myRoot"},"slug":{"en":"myroot"}}' },
           { :status => 200, :body => '{"id":"123","rootCategory":{"id":"abc"}}' })
 
         r = <<-eos
@@ -165,43 +165,43 @@ changeName,123,,foo,
           { :status => 200, :body => '[]' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Winter"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Winter"},"slug":{"en":"winter"}}' },
           { :status => 200, :body => '{"id":"1"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Men"},"parent":{"id":"1","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Men"},"slug":{"en":"men-1"},"parent":{"id":"1","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"2"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Sommer"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Sommer"},"slug":{"en":"sommer"}}' },
           { :status => 200, :body => '{"id":"3"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Women"},"parent":{"id":"3","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Women"},"slug":{"en":"women-3"},"parent":{"id":"3","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"4"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Shirts"},"parent":{"id":"4","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Shirts"},"slug":{"en":"shirts-4"},"parent":{"id":"4","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"5"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"T-Shirts"},"parent":{"id":"5","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"T-Shirts"},"slug":{"en":"t-shirts-5"},"parent":{"id":"5","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"6"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Hats"},"parent":{"id":"4","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Hats"},"slug":{"en":"hats-4"},"parent":{"id":"4","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"7"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Shoes"},"parent":{"id":"4","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Shoes"},"slug":{"en":"shoes-4"},"parent":{"id":"4","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"8"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Girls"},"parent":{"id":"3","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Girls"},"slug":{"en":"girls-3"},"parent":{"id":"3","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"9"}' })
 
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Shoes"},"parent":{"id":"9","typeId":"category"}}' },
+          { :method => :post, :path => '/api/myProject/categories', :body => '{"name":{"en":"Shoes"},"slug":{"en":"shoes-9"},"parent":{"id":"9","typeId":"category"}}' },
           { :status => 200, :body => '{"id":"10"}' })
 
         r = <<-eos

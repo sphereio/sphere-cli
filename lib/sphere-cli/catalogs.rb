@@ -230,9 +230,10 @@ module Sphere
     end
 
     def create_json_data(name, current_parents, column_index, root_index)
-      d = { :name => lang_val(name) }
+      d = { :name => lang_val(name), :slug => lang_val(slugify(name)) }
       if column_index > root_index
         p_id = current_parents[column_index - 1]
+        d[:slug] = lang_val("#{slugify(name)}-#{p_id}")
         d[:parent] = { :id => p_id, :typeId => 'category' }
       end
       d.to_json

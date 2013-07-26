@@ -22,6 +22,10 @@ module Sphere
       return $sphere_download_instance
     end
 
+    def slugify(name)
+      name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+    end
+
     # prints the specified text to output, unless running in quiet mode
     def printMsg(text)
       $stderr.puts text unless $quiet
