@@ -9,7 +9,7 @@ Before do
   # Using "announce" causes massive warnings on 1.9.2
   @puts = true
   @original_rubylib = ENV['RUBYLIB']
-  @aruba_timeout_seconds = 10
+  @aruba_timeout_seconds = 20
   ENV['RUBYLIB'] = LIB_DIR + File::PATH_SEPARATOR + ENV['RUBYLIB'].to_s
 end
 
