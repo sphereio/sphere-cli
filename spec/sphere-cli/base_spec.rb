@@ -47,5 +47,15 @@ module Sphere
         jsonValue(parse_JSON(j), %w'attributes [n=bar/v]').should eq "2"
       end
     end
+    describe '#slugify' do
+      it 'string' do
+        slugify("Some Wired char^").should eq 'some-wired-char'
+      end
+      it 'hash' do
+        slugs = slugify({:en => "Nice Slug", :de => "  kurze URL  "})
+        slugs[:en].should eq "nice-slug"
+        slugs[:de].should eq "kurze-url"
+      end
+    end
   end
 end

@@ -23,7 +23,11 @@ module Sphere
     end
 
     def slugify(name)
-      name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+      if name.class == String
+        name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+      else
+        name.each_with_object({}) {|(k, v), h| h[k] = slugify(v) }
+      end
     end
 
     # prints the specified text to output, unless running in quiet mode
@@ -56,8 +60,11 @@ module Sphere
       end
     end
 
+    def language
+      'en'
+    end
+
     def lang_val(value)
-      language = 'en'
       return value[language] if value.class == Hash
       { language.to_sym => value }
     end

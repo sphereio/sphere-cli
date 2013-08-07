@@ -182,6 +182,23 @@ myProd,pt,t1
         d[:errors].size.should be 0
         @prod.import_data d
       end
+      it 'product with multiple languages' do
+        Excon.stub(
+          { :method => :post, :path => '/api/myProject/products', :body => '{"productType":{"id":"123","typeId":"product-type"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":{"de":"meinProd","en":"myProd"},"slug":{"de":"meinprod","en":"myprod"},"description":{"de":"tolles Produkt","en":"awesome product"},"masterVariant":{"attributes":[]},"variants":[]}' },
+          { :status => 200, :body => '{"id":"abc","version":1}' })
+        Excon.stub(
+          { :method => :put, :path => '/api/myProject/products/abc', :body => '{"id":"abc","version":1,"actions":[{"action":"publish"}]}' },
+          { :status => 200 })
+
+        r = <<-eos
+name.de,name.en,description.de,description.en,productType,tax,variantId,
+meinProd,myProd,tolles Produkt,awesome product,pt,t1
+        eos
+        c = CSV.parse r
+        d = @prod.validate_rows c
+        d[:errors].size.should be 0
+        @prod.import_data d
+      end
       it 'product with variants' do
         body = '{"productType":{"id":"123","typeId":"product-type"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":{"en":"my Prod"},"slug":{"en":"my-prod"},"masterVariant":{"prices":[{"value":{"currencyCode":"EUR","centAmount":100}}],"attributes":[]},"variants":'
         body << '[{"prices":[{"value":{"currencyCode":"USD","centAmount":9999}}],"attributes":[]},{"prices":[{"value":{"currencyCode":"GBP","centAmount":123}}],"attributes":[]}]'

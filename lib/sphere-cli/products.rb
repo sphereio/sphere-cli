@@ -4,6 +4,7 @@ module Sphere
 
     ACTIONS = [nil, '', 'create', 'delete']
     NECESSARY_HEADERS = ['name', 'productType', 'variantId' ]
+    LANGUAGE_HEADERS = ['name', 'description', 'slug' ]
     COLUMNS_IGNORED = ['masterVariant', 'id', 'version', 'productType', 'taxCategory', 'name', 'categories', 'variants', 'hasStagedChanges', 'published']
     VARIANT_COLUMNS_IGNORED = ['id', 'prices', 'images', 'attributes']
     VALUES_DELIM = ';'
@@ -247,6 +248,7 @@ module Sphere
       header.each_with_index do |h,i|
         data[:errors] << "Duplicate header column named '#{h}'." if h2i.has_key? h
         h2i[h] = i
+        h2i["name"] = i if h == "name.#{language}"
       end
       data[:h2i] = h2i
 
@@ -438,9 +440,9 @@ module Sphere
       d = {}
       d[:productType] = { :id => product_type['id'], :typeId => 'product-type' }
       d[:taxCategory] = { :id => tax_id, :typeId => 'tax-category' }
-      d[:name] = lang_val name
-      d[:slug] = lang_val slug
-      d[:description] = lang_val desc if desc
+      d[:name] = name
+      d[:slug] = slug
+      d[:description] = desc if desc
       d.merge! cats if cats
       d[:masterVariant] = variant_json_data(product, h2i, product_type)
       d[:variants] = []
@@ -515,6 +517,22 @@ module Sphere
     end
 
     def get_val(row, attr_name, h2i)
+      if LANGUAGE_HEADERS.include? attr_name
+        vals = {}
+        h2i.each do |h,i|
+          next unless h
+          if h.start_with? attr_name and h.include? '.'
+            n, lang = h.split '.'
+            vals[lang] = row[h2i[h]]
+          end
+        end
+        if vals.empty?
+          # fall back to non localized column header
+          v = row[h2i[attr_name]] if h2i[attr_name]
+          vals[language] = v if v
+        end
+        return vals unless vals.empty?
+      end
       row[h2i[attr_name]] if h2i[attr_name] #TODO: raise error when header is not present
     end
 
