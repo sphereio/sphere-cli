@@ -60,7 +60,7 @@ module Sphere
         @name2product_type[pt['name']] = pt
       end
       duration=Time.now - start_time
-      printStatusLine "Downloading product types... Done, loaded #{pluralize data.size, 'product type'} in #{"%5.2f" % duration} seconds\n"
+      printStatusLine "Downloading product types... Done, loaded #{pluralize data.size, 'product type'} in #{"%4.2f" % duration} seconds\n"
 
       printStatusLine 'Downloading products... '
       start_time = Time.now
@@ -88,7 +88,7 @@ module Sphere
       @number_products = total
 
       duration=Time.now - start_time
-      printStatusLine "Downloading products... Done, loaded #{pluralize total, 'product'} in #{"%5.2f" % duration} seconds.\n"
+      printStatusLine "Downloading products... Done, loaded #{pluralize total, 'product'} in #{"%4.2f" % duration} seconds.\n"
     end
 
     def export_all
@@ -109,7 +109,7 @@ module Sphere
       end
 
       duration = Time.now - start_time
-      printStatusLine "Processing #{pluralize @number_products, 'products'}... Done in #{"%5.2f" % duration} seconds\n"
+      printStatusLine "Processing #{pluralize @number_products, 'products'}... Done in #{"%4.2f" % duration} seconds\n"
     end
 
     def export_csv
@@ -223,13 +223,13 @@ module Sphere
       end
 
       duration=Time.now - start_time
-      printStatusLine "Preprocessing products... Done, processed #{pluralize (parsed_rows.size - 1), 'line'} in #{"%5.2f" % duration} seconds\n"
+      printStatusLine "Preprocessing products... Done, processed #{pluralize (parsed_rows.size - 1), 'line'} in #{"%4.2f" % duration} seconds\n"
       printStatusLine 'Importing products... '
 
       total_products, total_variants = import_data data
 
       duration=Time.now - start_time
-      printStatusLine "Importing products... Done, created #{pluralize total_products, 'product'} and #{pluralize total_variants, 'variant'} in #{"%5.2f" % duration} seconds\n"
+      printStatusLine "Importing products... Done, created #{pluralize total_products, 'product'} and #{pluralize total_variants, 'variant'} in #{"%4.2f" % duration} seconds\n"
     end
 
     def validate_rows(csv_input)

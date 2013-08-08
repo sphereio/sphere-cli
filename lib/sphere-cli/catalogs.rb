@@ -42,7 +42,7 @@ module Sphere
       @categories = parse_JSON res
 
       duration=Time.now - start_time
-      printStatusLine "Downloading categories... Done in #{"%5.2f" % duration} seconds.\n"
+      printStatusLine "Downloading categories... Done in #{"%4.2f" % duration} seconds.\n"
     end
 
     def export
@@ -62,7 +62,7 @@ module Sphere
       end
 
       duration = Time.now - start_time
-      printStatusLine "Exporting categories... Done, #{pluralize(rows.size, 'catagory', 'categories')} in #{"%5.2f" % duration} seconds.\n"
+      printStatusLine "Exporting categories... Done, #{pluralize(rows.size, 'catagory', 'categories')} in #{"%4.2f" % duration} seconds.\n"
       return header, rows
     end
 
@@ -128,7 +128,7 @@ module Sphere
       creations, updates = import_data data
 
       duration=Time.now - start_time
-      printStatusLine "Importing categories... Done, #{pluralize creations, 'category', 'categories'} created and #{pluralize updates, 'category', 'categories'} updated and in #{"%5.2f" % duration} seconds\n"
+      printStatusLine "Importing categories... Done, #{pluralize creations, 'category', 'categories'} created and #{pluralize updates, 'category', 'categories'} updated and in #{"%4.2f" % duration} seconds\n"
     end
 
     def validate_rows(csv_input)

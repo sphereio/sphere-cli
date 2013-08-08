@@ -28,7 +28,7 @@ module Sphere
         end
       end
       duration = Time.now - start_time
-      printStatusLine "Downloading... Done in #{"%5.2f" % duration} seconds\n" unless quiet
+      printStatusLine "Downloading... Done in #{"%4.2f" % duration} seconds\n" unless quiet
       t
     end
   end

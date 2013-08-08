@@ -34,7 +34,7 @@ Feature: Import product data via CSV files
     """
     When I run `sphere products import prods.csv`
     Then the exit status should be 0
-    And the output should match /Done, created 2 products and 2 variants in  [0-9\.]+ seconds/
+    And the output should match /Done, created 2 products and 2 variants in [0-9\.]+ seconds/
     And I wait for the backend to have 2 products stored
     When I run `sphere products export`
     Then the exit status should be 0

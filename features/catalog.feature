@@ -14,7 +14,7 @@ Feature: Managing catalogs
     """
     When I run `sphere categories import im.csv`
     Then the exit status should be 0
-    And the output should match /Importing categories... Done, 11 categories created and 0 categories updated and in  [0-9.]+ seconds/
+    And the output should match /Importing categories... Done, 11 categories created and 0 categories updated and in [0-9.]+ seconds/
     When I run `sphere category export`
     Then the exit status should be 0
     And the output should match /^action,id,rootCategory,category,category,category$/
@@ -29,7 +29,7 @@ Feature: Managing catalogs
     And the output should match /^"",[a-z0-9-]+,"","",Shoes$/
     And the output should match /^"",[a-z0-9-]+,"","","",Slipper$/
     And the output should match /^"",[a-z0-9-]+,Fall$/
-    And the output should match /Exporting categories... Done, 11 categories in  [0-9.]+ seconds/
+    And the output should match /Exporting categories... Done, 11 categories in [0-9.]+ seconds/
     When I run `sphere categories`
     Then the exit status should be 0
     And the output should match /^Winter:\ [a-z0-9-]+$/
