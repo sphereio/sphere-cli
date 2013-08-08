@@ -42,9 +42,13 @@ command [:product, :products] do |c|
   c.long_desc 'Import products from a CSV file (run in a configured code folder or provide the project key)'
   c.arg_name 'filename'
   c.command [:import] do |import|
+    import.arg_name 'lang'
+    import.flag [:lang], :desc => "Default language for import", :type => String, :default_value => 'en'
+
     import.action do |global_options,options,args|
       sphere.ensureLoggedIn
       project_key = get_project_key options
+      set_language options
       input = get_input args
       sphere_products = Sphere::Products.new project_key, global_options
       sphere_products.fetch_all

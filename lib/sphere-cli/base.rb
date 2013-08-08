@@ -60,8 +60,14 @@ module Sphere
       end
     end
 
+    $language = 'en'
+
     def language
-      'en'
+      $language
+    end
+
+    def set_language(options)
+      $language = options[:lang]
     end
 
     def lang_val(value)

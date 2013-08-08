@@ -22,8 +22,12 @@ command [:category, :categories] do |c|
   c.long_desc ''
   c.arg_name 'cvsFile'
   c.command :import do |import|
+    import.arg_name 'lang'
+    import.flag [:lang], :desc => "Default language for import", :type => String, :default_value => 'en'
+
     import.action do |global_options, options, args|
       project_key = get_project_key options
+      set_language options
       input = get_file_input args
       sphere.ensureLoggedIn
       sphere_catalogs = Sphere::Catalogs.new project_key
