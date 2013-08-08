@@ -421,10 +421,9 @@ module Sphere
     end
 
     def is_variant?(row, h2i)
-      n = get_val row, 'name', h2i
       pt = get_val row, 'productType', h2i
       v = get_val row, 'variantId', h2i
-      return true if (n.nil? or n.empty?) and (pt.nil? or pt.empty?) and not v.empty?
+      return true if (pt.nil? or pt.empty?) and not v.empty? and v.to_i > 1
     end
 
     def create_product_json_data(product, h2i, product_type)
