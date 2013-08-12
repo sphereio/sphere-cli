@@ -27,10 +27,10 @@ Feature: Import product data via CSV files
     And a file named "prods.csv" with:
     """
     productType,name,categories,tax,variantId,size,images
-    myPT,x,Shoes;Shirts,myTax,0,XL,https://www.google.com/images/errors/logo_sm.gif
-    ,,,,0,L,
-    ,,,,0,S,
-    myPT,y,Shirts,myTax,0,S,https://fbcdn-dragon-a.akamaihd.net/cfs-ak-ash4/84979/417/388809427820169_484552950.png
+    myPT,x,Shoes;Shirts,myTax,1,XL,https://www.google.com/images/errors/logo_sm.gif
+    ,,,,2,L,
+    ,,,,3,S,
+    myPT,y,Shirts,myTax,1,S,https://fbcdn-dragon-a.akamaihd.net/cfs-ak-ash4/84979/417/388809427820169_484552950.png
     """
     When I run `sphere products import prods.csv`
     Then the exit status should be 0
