@@ -48,7 +48,7 @@ module Sphere
       it 'just works' do
         Excon.stub(
           { :method => :get, :path => '/api/projects' },
-          { :status => 200, :body => '[{"id":"1","key":"p","name":"P"}]' })
+          { :status => 200, :body => '[{"id":"1","key":"p","name":"P","clients":[{"id":"","secret":""}]}]' })
 
         expect { @proj.details ['p'], {} }.to_not raise_error
       end

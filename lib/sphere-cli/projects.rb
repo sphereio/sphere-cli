@@ -27,8 +27,10 @@ module Sphere
         data.each do |d|
           next unless d['key'] == project_key
           puts "id: #{d['id']}"
-          puts "Name: #{d['name']}"
-          puts "Key: #{d['key']}"
+          puts "name: #{d['name']}"
+          puts "key: #{d['key']}"
+          puts "clientId: #{d['clients'][0]['id']}"
+          puts "clientSecret: #{d['clients'][0]['secret']}"
           return d
         end
         raise "Project with key '#{project_key}' does not exist."
