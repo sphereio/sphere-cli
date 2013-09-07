@@ -112,6 +112,32 @@ module Sphere
       printStatusLine "Processing #{pluralize @number_products, 'products'}... Done in #{"%4.2f" % duration} seconds\n"
     end
 
+    def delete_all
+      if not @global_options[:force]
+        puts 'WARNING: this action can not be undone'
+        print 'Type the project key to verify: '
+        verify_key = ask
+        raise 'Cancelled, no action performed.' if verify_key != @sphere_project_key
+      end
+
+      fetch_all
+
+      printStatusLine 'Deleting products... '
+      start_time = Time.now
+      size = @products.size
+      @products.each_with_index do |p,i|
+        d = publish_product_json_command p['id'], p['version'], true
+        sphere.put product_publish_url(@sphere_project_key, p['id']), d
+        sphere.delete product_delete_url(@sphere_project_key, p['id'], p['version'] + 1)
+
+        n = i + 1
+        percents = (n * 100 / size).round
+        printStatusLine "Deleting products... #{n} of #{size} (#{percents}% done)"
+      end
+      duration = Time.now - start_time
+      printStatusLine "Deleting products... Done, deleted #{pluralize size, 'product'} in #{"%4.2f" % duration} seconds\n"
+    end
+
     def export_csv
       base_columns = Set.new []
       variant_columns = Set.new []
@@ -229,7 +255,7 @@ module Sphere
       total_products, total_variants = import_data data
 
       duration=Time.now - start_time
-      printStatusLine "Importing products... Done, created #{pluralize total_products, 'product'} and #{pluralize total_variants, 'variant'} in #{"%4.2f" % duration} seconds\n"
+      printStatusLine "Importing products... Done, created #{pluralize total_products, 'product'} with #{pluralize total_variants, 'variant'} in #{"%4.2f" % duration} seconds\n"
     end
 
     def validate_rows(csv_input)
@@ -379,11 +405,11 @@ module Sphere
         end
         n = i + 1
         percents = (n * 100 / max).round
-        printStatusLine "Importing products... #{n} of #{max} (#{percents}% done)"
+        printStatusLine "Importing products... line #{n} of #{max} (#{percents}% done)"
       end
       total_products += create_product current_product, current_images, product_ids, row_start
 
-      printStatusLine "Importing products... publishing #{pluralize product_ids.size, 'product'}"
+      printStatusLine "Importing products... publishing #{pluralize product_ids.size, 'product'} including their variants"
       product_ids.each do |id|
         d = publish_product_json_command id, 1
         sphere.put product_publish_url(@sphere_project_key, id), d
@@ -475,9 +501,9 @@ module Sphere
       i
     end
 
-    def publish_product_json_command(product_id, product_version)
+    def publish_product_json_command(product_id, product_version, unpublish=false)
       d = { :id => product_id, :version => product_version }
-      d[:actions] = [{ :action => 'publish' }]
+      d[:actions] = [{ :action => "#{'un' if unpublish }publish" }]
       d.to_json
     end
 

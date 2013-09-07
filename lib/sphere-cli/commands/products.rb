@@ -56,6 +56,17 @@ command [:product, :products] do |c|
     end
   end
 
+  c.desc 'Delete products'
+  c.long_desc 'Delete all products in your prodject. Can not be undone'
+  c.command [:delete] do |delete|
+    delete.action do |global_options,options,args|
+      sphere.ensureLoggedIn
+      project_key = get_project_key options
+      sphere_products = Sphere::Products.new project_key, global_options
+      sphere_products.delete_all
+    end
+  end
+
   c.default_command :list
 
 end

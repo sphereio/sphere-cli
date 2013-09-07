@@ -47,6 +47,7 @@ module Sphere
     def variant_create_url(project_key, product_id)  product_details_url project_key, product_id end
     def product_images_url(project_key, product_id) "/api/#{project_key}/products/#{product_id}/images" end
     def product_images_import_url(project_key, product_id) "/api/#{project_key}/products/#{product_id}/import-images" end
+    def product_delete_url(project_key, product_id, version) "#{product_details_url project_key, product_id}?version=#{version}" end
   end
 
   module WWW
