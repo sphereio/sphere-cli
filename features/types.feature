@@ -36,7 +36,7 @@ Feature: Managing product types works
     And a file named "p.csv" with:
     """
     productType,name,tax,variantId,a1,a2,a3,a4,a5,a6,a7,a8
-    all-types,x,myTax,0,text,a,3,"GBP 899",1970-01-01,11:11,1970-01-01T11:11:11,"multi\nline\ntext"
+    all-types,product,myTax,0,text,a,3,"GBP 899",1970-01-01,11:11,1970-01-01T11:11:11,"multi\nline\ntext"
     """
     When I run `sphere types create @pt.json`
     Then the exit status should be 0
