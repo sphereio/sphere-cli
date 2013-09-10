@@ -5,7 +5,7 @@ Feature: Signup to Sphere using the command line tool
     When I run `sphere signup` interactively
     When I type "Horst mal wieder"
     When I type "webtests+cli-testing-signup@commercetools.de"
-    When I type "secret"
+    When I type "secret123"
     Then the exit status should be 0
     And I should be logged in as "webtests+cli-testing-signup@commercetools.de"
     When I run `sphere account delete` interactively
