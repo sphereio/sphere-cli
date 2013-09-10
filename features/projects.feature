@@ -26,8 +26,10 @@ Feature: Projects commands
     When I run `sphere projects details`
     Then the exit status should be 0
     And the output should match /id: [a-z0-9-]+/
-    And the output should match /Name: cli-testing-[0-9]{14}-[0-9]{2}/
-    And the output should match /Key: cli-testing-[0-9]{14}-[0-9]{2}/
+    And the output should match /name: cli-testing-[0-9]{14}-[0-9]{2}/
+    And the output should match /key: cli-testing-[0-9]{14}-[0-9]{2}/
+    And the output should match /clientId: /
+    And the output should match /clientSecret: /
     And the stdout from "sphere projects details" should not be json
 
   Scenario: Project details with pretty json output works
