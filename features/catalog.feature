@@ -56,3 +56,4 @@ Feature: Managing catalogs
     And the output should match /Importing categories... Done, 2 categories created and 0 categories updated and in [0-9.]+ seconds/
     When I run `sphere -j category export`
     Then the exit status should be 0
+    And the output should match /Exporting categories... Done, 2 categories in [0-9.]+ seconds/
