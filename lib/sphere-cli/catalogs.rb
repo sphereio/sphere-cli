@@ -7,7 +7,8 @@ module Sphere
     attr_reader :id2version
     attr_reader :fq_cat2id
 
-    ACTIONS = [nil, '', 'create','changeName'] # TODO: add delete
+    ACTIONS = [ nil, '', 'create','changeName' ] # TODO: add delete
+    LANGUAGE_HEADERS = [ 'description', 'slug' ]
 
     def initialize(project_key)
       @sphere_project_key = project_key
@@ -16,6 +17,7 @@ module Sphere
       @id2version = {}
       @duplicate_names = {}
       @name2id = {}
+      set_language_attributes LANGUAGE_HEADERS
     end
 
     def list(global_options)
@@ -174,6 +176,7 @@ module Sphere
         end
         data[:actions] << action
         data[:ids] << id
+        data[:h2i] = h2i
         data[:original_indexes] << row_index
         data[:rows] << row
       end
@@ -181,10 +184,10 @@ module Sphere
     end
 
     def import_data(data)
-      import_rows data[:rows], data[:actions], data[:ids], data[:root_index], data[:original_indexes]
+      import_rows data[:rows], data[:actions], data[:ids], data[:h2i], data[:root_index], data[:original_indexes]
     end
 
-    def import_rows(rows, actions, ids, root_index, original_indexes)
+    def import_rows(rows, actions, ids, h2i, root_index, original_indexes)
       current_parents = []
       max = rows.size
       creations = 0
@@ -200,7 +203,7 @@ module Sphere
           end
           if action == 'create'
             creations += 1
-            j = create_json_data cell, current_parents, column_index, root_index
+            j = create_json_data cell, row, h2i, current_parents, column_index, root_index
             url = category_create_url @sphere_project_key
             res = sphere.post url, j
             sphere.ensure2XX "[row #{original_indexes[i]}] Problem on category creation"
@@ -229,11 +232,14 @@ module Sphere
       d.to_json
     end
 
-    def create_json_data(name, current_parents, column_index, root_index)
-      d = { :name => lang_val(name), :slug => lang_val(slugify(name)) }
+    def create_json_data(name, row, h2i, current_parents, column_index, root_index)
+      slug = get_val row, 'slug', h2i
+      desc = get_val row, 'description', h2i
+      d = { :name => lang_val(name), :slug => slug ? slug : lang_val(slugify(name)) }
+      d[:description] = desc if desc
       if column_index > root_index
         p_id = current_parents[column_index - 1]
-        d[:slug] = lang_val("#{slugify(name)}-#{p_id}")
+        d[:slug] = slug ? slug : lang_val("#{slugify(name)}-#{p_id}")
         d[:parent] = { :id => p_id, :typeId => 'category' }
       end
       d.to_json

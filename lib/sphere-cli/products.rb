@@ -21,6 +21,7 @@ module Sphere
       @id2version = {}
       @cat_impl = Sphere::Catalogs.new project_key
       @tax_impl = tax_impl
+      set_language_attributes LANGUAGE_HEADERS
     end
 
     def list(options, global_options)
@@ -534,34 +535,14 @@ module Sphere
       return d if product_type['attributes'].empty?
       product_type['attributes'].each do |a|
         n = a['name']
-        value = get_enc_val row, n, h2i, a['type']
+        value = get_typed_val row, n, h2i, a['type']
         next if value.nil?
         d[:attributes] << { :name => n, :value => value }
       end
       d
     end
 
-    def get_val(row, attr_name, h2i)
-      if LANGUAGE_HEADERS.include? attr_name
-        vals = {}
-        h2i.each do |h,i|
-          next unless h
-          if h.start_with? attr_name and h.include? '.'
-            n, lang = h.split '.'
-            vals[lang] = row[h2i[h]]
-          end
-        end
-        if vals.empty?
-          # fall back to non localized column header
-          v = row[h2i[attr_name]] if h2i[attr_name]
-          vals[language] = v if v
-        end
-        return vals unless vals.empty?
-      end
-      row[h2i[attr_name]] if h2i[attr_name] #TODO: raise error when header is not present
-    end
-
-    def get_enc_val(row, attr_name, h2i, attr_type)
+    def get_typed_val(row, attr_name, h2i, attr_type)
       v = get_val row, attr_name, h2i
       return nil if v.nil?
       return v.to_i if attr_type == 'number'

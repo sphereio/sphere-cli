@@ -7,13 +7,13 @@ module Sphere
     end
     describe '#create_json_data' do
       it 'catalog should have no parent' do
-        t = @cat.create_json_data 'foo', [], 0, 0
+        t = @cat.create_json_data 'foo', [], {}, [], 0, 0
         j = JSON.parse t
         j['name']['en'].should eq 'foo'
       end
       it 'category should have parent' do
         p = ['123']
-        t = @cat.create_json_data 'bar', p, 1, 0
+        t = @cat.create_json_data 'bar', [], {}, p, 1, 0
         j = JSON.parse t
         j['parent']['id'].should eq '123'
         j['parent']['typeId'].should eq 'category'

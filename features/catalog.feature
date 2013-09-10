@@ -42,3 +42,17 @@ Feature: Managing catalogs
     When I run `sphere categories export`
     Then the exit status should be 0
     And the stdout from "sphere categories export" should contain "Handschuhe"
+
+  Scenario: Import categories with slug and description
+    Given I am logged in and select a new project
+    And a file named "im.csv" with:
+    """
+    slug,description,rootCategory,subCategory
+    winter,It's so cold,Winter,
+    shoes,Nice shoes and other stuff,,Shoes
+    """
+    When I run `sphere categories import --lang=it im.csv`
+    Then the exit status should be 0
+    And the output should match /Importing categories... Done, 2 categories created and 0 categories updated and in [0-9.]+ seconds/
+    When I run `sphere -j category export`
+    Then the exit status should be 0

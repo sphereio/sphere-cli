@@ -75,6 +75,30 @@ module Sphere
       { language.to_sym => value }
     end
 
+    def set_language_attributes(attribs)
+      $language_attributes = attribs
+    end
+
+    def get_val(row, attr_name, h2i)
+      if $language_attributes.include? attr_name
+        vals = {}
+        h2i.each do |h,i|
+          next unless h
+          if h.start_with? attr_name and h.include? '.'
+            n, lang = h.split '.'
+            vals[lang] = row[h2i[h]]
+          end
+        end
+        if vals.empty?
+          # fall back to non localized column header
+          v = row[h2i[attr_name]] if h2i[attr_name]
+          vals[language] = v if v
+        end
+        return vals unless vals.empty?
+      end
+      row[h2i[attr_name]] if h2i[attr_name] #TODO: raise error when header is not present
+    end
+
     # Obtain a value from the specified JSON object following a path of
     # attribute names (i.e. go deeper into each attribute) specified in attribPath
     # (an array of strings).
