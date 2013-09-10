@@ -7,11 +7,11 @@ def exec_cmd(cmd, expected_output, invert_output=false)
 end
 
 def signup_with_secret(username)
-  run_simple "sphere signup #{username} #{username} secret", true, @aruba_timeout_seconds
+  run_simple "sphere signup #{username} #{username} secret123", true, @aruba_timeout_seconds
 end
 
 def login_with_secret(username)
-  run_simple "sphere --user #{username} --password secret login", true, @aruba_timeout_seconds
+  run_simple "sphere --user #{username} --password secret123 login", true, @aruba_timeout_seconds
 end
 
 def create_product(product, pt)
