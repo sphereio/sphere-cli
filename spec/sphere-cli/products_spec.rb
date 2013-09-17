@@ -148,6 +148,57 @@ module Sphere
         @d[:errors][0].should eq "[row 1] Tax category with name 'myTax' is not unique. Please use the tax category's id instead. One of t1, t2"
       end
     end
+    describe '#validate_prices' do
+      before do
+        @group_impl = Sphere::CustomerGroups.new 'proj'
+        @h2i = { 'prices' => 0 }
+        @d = { :errors => [] }
+      end
+      it 'no prices header' do
+        row = CSV.parse 'foo,bar'
+        prices = @prod.validate_prices row, 7, {}, @d, @group_impl
+        prices.should eq nil
+        @d[:errors].size.should be 0
+      end
+      it 'no prices' do
+        row = CSV.parse ''
+        prices = @prod.validate_prices row, 3, @h2i, @d, @group_impl
+        prices.should eq nil
+        @d[:errors].size.should be 0
+      end
+      it 'simple single price' do
+        row = CSV.parse 'EUR 100'
+        prices = @prod.validate_prices row[0], 6, @h2i, @d, @group_impl
+        prices[:prices].size.should eq 1
+        prices[:prices][0][:value][:currencyCode].should eq 'EUR'
+        prices[:prices][0][:value][:centAmount].should eq 100
+        @d[:errors].size.should be 0
+      end
+      it 'price with unkown customer group' do
+        row = CSV.parse 'EUR 100 B2B'
+        prices = @prod.validate_prices row[0], 6, @h2i, @d, @group_impl
+        @d[:errors].size.should be 1
+        @d[:errors][0].should eq "[row 6] Customer group with name 'B2B' does not exist."
+      end
+      it 'invalid prices value' do
+        row = CSV.parse 'EUR-100'
+        prices = @prod.validate_prices row[0], 2, @h2i, @d, @group_impl
+        @d[:errors].size.should be 1
+        @d[:errors][0].should eq "[row 2] Invalid price value 'EUR-100' found."
+      end
+      it 'multiple prices' do
+        row = CSV.parse 'YEN 1000;EUR 100;USD 3000'
+        prices = @prod.validate_prices row[0], 2, @h2i, @d, @group_impl
+        prices[:prices].size.should eq 3
+        prices[:prices][0][:value][:currencyCode].should eq 'YEN'
+        prices[:prices][0][:value][:centAmount].should eq 1000
+        prices[:prices][1][:value][:currencyCode].should eq 'EUR'
+        prices[:prices][1][:value][:centAmount].should eq 100
+        prices[:prices][2][:value][:currencyCode].should eq 'USD'
+        prices[:prices][2][:value][:centAmount].should eq 3000
+        @d[:errors].size.should be 0
+      end
+    end
     describe 'Product import with existing type but without existing products' do
       before do
         Excon.stub(
@@ -162,6 +213,9 @@ module Sphere
         Excon.stub(
           { :method => :get, :path => '/api/myProject/tax-categories' },
           { :status => 200, :body => '[{"id":"t1","name":"T1"}]' })
+        Excon.stub(
+          { :method => :get, :path => '/api/myProject/customer-groups' },
+          { :status => 200, :body => '[{"id":"cg1","name":"B2B"}]' })
         $force = true
         @prod.fetch_all
       end
@@ -199,9 +253,10 @@ meinProd,myProd,tolles Produkt,awesome product,pt,t1
         d[:errors].size.should be 0
         @prod.import_data d
       end
-      it 'product with variants' do
-        body = '{"productType":{"id":"123","typeId":"product-type"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":{"en":"my Prod"},"slug":{"en":"my-prod"},"masterVariant":{"prices":[{"value":{"currencyCode":"EUR","centAmount":100}}],"attributes":[]},"variants":'
-        body << '[{"prices":[{"value":{"currencyCode":"USD","centAmount":9999}}],"attributes":[]},{"prices":[{"value":{"currencyCode":"GBP","centAmount":123}}],"attributes":[]}]'
+      it 'product with variants and prices' do
+        body = '{"productType":{"id":"123","typeId":"product-type"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":{"en":"my Prod"},"slug":{"en":"my-prod"}'
+        body << ',"masterVariant":{"prices":[{"country":"DE","value":{"currencyCode":"EUR","centAmount":100}}],"attributes":[]}'
+        body << ',"variants":[{"prices":[{"value":{"currencyCode":"USD","centAmount":9999}}],"attributes":[]},{"prices":[{"customergroup":{"typeId":"customerGroup","id":"cg1"},"value":{"currencyCode":"GBP","centAmount":123}}],"attributes":[]}]'
         body << '}'
         Excon.stub(
           { :method => :post, :path => '/api/myProject/products', :body => body },
@@ -211,10 +266,10 @@ meinProd,myProd,tolles Produkt,awesome product,pt,t1
           { :status => 200, :body => '{"id":"abc","version":2}' })
 
         r = <<-eos
-action,id,name,productType,tax,variantId,currencyCode,centAmount
-,,my Prod,pt,t1,1,EUR,100
-,,,,,2,USD,9999
-,,,,,3,GBP,123
+action,id,name,productType,tax,variantId,prices
+,,my Prod,pt,t1,1,DE-EUR 100
+,,,,,2,USD 9999
+,,,,,3,GBP 123 B2B
         eos
         c = CSV.parse r
         d = @prod.validate_rows c

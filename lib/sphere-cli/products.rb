@@ -21,6 +21,7 @@ module Sphere
       @id2version = {}
       @cat_impl = Sphere::Catalogs.new project_key
       @tax_impl = tax_impl
+      @group_impl = Sphere::CustomerGroups.new project_key
       set_language_attributes LANGUAGE_HEADERS
     end
 
@@ -268,6 +269,9 @@ module Sphere
       @tax_impl.fetch_all
       @tax_impl.fill_maps
 
+      @group_impl.fetch_all
+      @group_impl.fill_maps
+
       data = { :errors => [], :h2i => {}, :deletes => [], :rows => [], :actions => [], :original_indexes => [] }
 
       h2i = {}
@@ -326,6 +330,10 @@ module Sphere
           tax_id = validate_tax_category row, row_index, h2i, data, @tax_impl
           row[h2i['tax']] = tax_id # Store the id of the tax category
         end
+
+        json_prices = validate_prices row, row_index, h2i, data, @group_impl
+        row[h2i['prices']] = json_prices if json_prices
+
         data[:actions] << action
         data[:original_indexes] << row_index
         data[:rows] << row
@@ -370,6 +378,42 @@ module Sphere
       data[:errors] << "[row #{row_index}] Tax category with name '#{t}' does not exist." && return unless tax_impl.name2id.has_key? t
       data[:errors] << "[row #{row_index}] Tax category with name '#{t}' is not unique. Please use the tax category's id instead. One of #{tax_impl.duplicate_names[t].join ', '}" && return if tax_impl.duplicate_names.has_key? t
       tax_impl.name2id[t]
+    end
+
+    def validate_prices(row, row_index, h2i, data, group_impl)
+      d = { :prices => [] }
+      # example: "DE-EUR 9999 B2B;USD 13900;AT-EUR 10999;YEN 100000 B2C"
+      v = get_val row, 'prices', h2i
+      return nil unless v
+      v.split(';').each do |entry|
+        p = {}
+        data[:errors] << "[row #{row_index}] Invalid price value '#{v}' found." && next unless entry.include? ' '
+        country_currency, centamount, customergroup = entry.split(' ')
+        add_customer_group p, customergroup, row_index, data, group_impl
+        currency = ''
+        if country_currency.include? '-'
+          country, currency = country_currency.split('-')
+          p[:country] = country
+        else
+          currency = country_currency
+        end
+        p[:value] = money(currency, centamount)
+        d[:prices] << p
+      end
+      d
+    end
+
+    def add_customer_group(price, customergroup, row_index, data, group_impl)
+      return price unless customergroup
+      g_id = ''
+      if group_impl.id2version.has_key? customergroup
+        g_id = customergroup
+      else
+        data[:errors] << "[row #{row_index}] Customer group with name '#{customergroup}' does not exist." && return unless group_impl.name2id.has_key? customergroup
+        g_id = group_impl.name2id[customergroup]
+      end
+      price[:customergroup] = { :typeId => "customerGroup", :id => g_id }
+      price
     end
 
     def delete_products(ids)
@@ -459,7 +503,6 @@ module Sphere
       slug = slugify name unless slug
       sku = get_val product, 'sku', h2i
       desc = get_val product, 'description', h2i
-      price = prices product, h2i
       cats = categories product, h2i
       tax_id = get_val product, 'tax', h2i
 
@@ -477,7 +520,7 @@ module Sphere
 
     def variant_json_data(variant, h2i, product_type)
       sku = get_val variant, 'sku', h2i
-      price = prices variant, h2i
+      price = get_val variant, 'prices', h2i
       d = {}
       d[:sku] = sku if sku
       d.merge! price if price
@@ -506,13 +549,6 @@ module Sphere
       d = { :id => product_id, :version => product_version }
       d[:actions] = [{ :action => "#{'un' if unpublish }publish" }]
       d.to_json
-    end
-
-    def prices(row, h2i) # TODO: support multiple prices
-      p = get_val row, 'centAmount', h2i
-      c = get_val row, 'currencyCode', h2i
-      return nil if p.nil? or c.nil? # TODO: better return {}?
-      d = { :prices => [{ :value => money(c, p) }] }
     end
 
     def money(currency, price)

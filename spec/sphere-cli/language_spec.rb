@@ -35,6 +35,19 @@ module Sphere
           { 'size' => 0 }
         )
         v.should eq '77'
+        v.class.should be String
+      end
+      it 'get value from parsed CSV' do
+        row = CSV.parse 'EUR 100'
+        row.class.should be Array
+        row[0].class.should be Array
+        v = get_val(
+          row[0],
+          'prices',
+          { 'prices' => 0 }
+        )
+        v.should eq 'EUR 100'
+        v.class.should be String
       end
     end
   end

@@ -48,6 +48,9 @@ module Sphere
     def product_images_url(project_key, product_id) "/api/#{project_key}/products/#{product_id}/images" end
     def product_images_import_url(project_key, product_id) "/api/#{project_key}/products/#{product_id}/import-images" end
     def product_delete_url(project_key, product_id, version) "#{product_details_url project_key, product_id}?version=#{version}" end
+
+    # CUSTOMER GROUPS
+    def customergroups_list_url(project_key) "/api/#{project_key}/customer-groups" end
   end
 
   module WWW
