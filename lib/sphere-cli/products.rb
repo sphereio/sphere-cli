@@ -412,7 +412,7 @@ module Sphere
         data[:errors] << "[row #{row_index}] Customer group with name '#{customergroup}' does not exist." && return unless group_impl.name2id.has_key? customergroup
         g_id = group_impl.name2id[customergroup]
       end
-      price[:customergroup] = { :typeId => "customerGroup", :id => g_id }
+      price[:customerGroup] = { :typeId => "customerGroup", :id => g_id }
       price
     end
 
