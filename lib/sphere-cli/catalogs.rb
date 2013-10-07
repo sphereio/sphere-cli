@@ -76,7 +76,7 @@ module Sphere
       return rows unless cats
       @max_level = level if level > @max_level
       cats.each do |cat|
-        row = [''] # id
+        row = [''] # action
         row << cat['id']
         row = row + ([''] * level) # put category in right column
         row << lang_val(cat['name'])
