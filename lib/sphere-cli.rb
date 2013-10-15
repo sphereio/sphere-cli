@@ -12,6 +12,7 @@ require 'sphere-cli/projects.rb'
 require 'sphere-cli/folder.rb'
 require 'sphere-cli/taxes.rb'
 require 'sphere-cli/customergroups.rb'
+require 'sphere-cli/customers.rb'
 
 # Add requires for other files you add to your project here, so
 # you just need to require this one file in your bin file

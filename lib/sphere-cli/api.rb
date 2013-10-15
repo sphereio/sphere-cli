@@ -51,6 +51,9 @@ module Sphere
 
     # CUSTOMER GROUPS
     def customergroups_list_url(project_key) "/api/#{project_key}/customer-groups" end
+
+    # CUSTOMERS
+    def customers_list_url(project_key) "/api/#{project_key}/customers" end
   end
 
   module WWW
