@@ -1,5 +1,6 @@
 Feature: Managing your customers
 
+  @wip
   Scenario: List customers
     Given I am logged in and select a new project
     When I run `sphere customers list`
