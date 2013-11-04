@@ -256,7 +256,7 @@ meinProd,myProd,tolles Produkt,awesome product,pt,t1
       it 'product with variants and prices' do
         body = '{"productType":{"id":"123","typeId":"product-type"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":{"en":"my Prod"},"slug":{"en":"my-prod"}'
         body << ',"masterVariant":{"prices":[{"country":"DE","value":{"currencyCode":"EUR","centAmount":100}}],"attributes":[]}'
-        body << ',"variants":[{"prices":[{"value":{"currencyCode":"USD","centAmount":9999}}],"attributes":[]},{"prices":[{"customerGroup":{"typeId":"customerGroup","id":"cg1"},"value":{"currencyCode":"GBP","centAmount":123}}],"attributes":[]}]'
+        body << ',"variants":[{"prices":[{"value":{"currencyCode":"USD","centAmount":9999}}],"attributes":[]},{"prices":[{"customerGroup":{"typeId":"customer-group","id":"cg1"},"value":{"currencyCode":"GBP","centAmount":123}}],"attributes":[]}]'
         body << '}'
         Excon.stub(
           { :method => :post, :path => '/api/myProject/products', :body => body },
