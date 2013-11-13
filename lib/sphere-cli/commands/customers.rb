@@ -18,10 +18,10 @@ command [:customer, :customers] do |c|
    end
   end
 
-  c.desc 'Export categories into CSV'
-  c.long_desc ''
-  c.command :export do |import|
-    import.action do |global_options, options, args|
+  c.desc 'Export customers as CSV'
+  c.long_desc 'TODO'
+  c.command :export do |export|
+    export.action do |global_options, options, args|
       project_key = get_project_key options
       sphere.ensureLoggedIn
       sphere_customers = Sphere::Customers.new project_key
@@ -29,6 +29,18 @@ command [:customer, :customers] do |c|
     end
   end
 
-  c.default_command :list
+  c.desc 'Import customers from CSV'
+  c.long_desc 'TODO'
+  c.arg_name 'cvsFile'
+  c.command :import do |import|
+    import.action do |global_options, options, args|
+      project_key = get_project_key options
+      input = get_file_input args
+      sphere.ensureLoggedIn
+      sphere_customers = Sphere::Customers.new project_key
+      sphere_customers.import input
+    end
+  end
 
+  c.default_command :list
 end

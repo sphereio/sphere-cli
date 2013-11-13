@@ -54,6 +54,7 @@ module Sphere
 
     # CUSTOMERS
     def customers_list_url(project_key) "/api/#{project_key}/customers" end
+    def customer_create_url(project_key) customers_list_url project_key end
   end
 
   module WWW
