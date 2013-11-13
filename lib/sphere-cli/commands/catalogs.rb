@@ -19,7 +19,7 @@ command [:category, :categories] do |c|
   end
 
   c.desc 'Import categories from CSV'
-  c.long_desc ''
+  c.long_desc 'TODO'
   c.arg_name 'cvsFile'
   c.command :import do |import|
     import.arg_name 'lang'
@@ -35,8 +35,8 @@ command [:category, :categories] do |c|
     end
   end
 
-  c.desc 'Export categories into CSV'
-  c.long_desc ''
+  c.desc 'Export categories as CSV'
+  c.long_desc 'TODO'
   c.command :export do |import|
     import.action do |global_options, options, args|
       project_key = get_project_key options
@@ -47,5 +47,4 @@ command [:category, :categories] do |c|
   end
 
   c.default_command :list
-
 end
