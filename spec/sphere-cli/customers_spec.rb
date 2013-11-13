@@ -44,7 +44,7 @@ module Sphere
 
         h, r = @c.export_to_csv
         r.size.should eq 1
-        r[0].should eq ["123", "", "", "", "", "Dr.", "", "", "", ""]
+        r[0].should eq ["123", "", "", "", "", "Dr.", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
       end
     end
     describe '#list' do
