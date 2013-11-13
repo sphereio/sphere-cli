@@ -24,11 +24,16 @@ Feature: Provide help for command line tool
   Scenario: All options have proper argument names and there is no TODO
     When I run `sphere help`
     When I run `sphere help account`
-    When I run `sphere help catalogs`
+    When I run `sphere help login`
+    When I run `sphere help logout`
+    When I run `sphere help signup`
+    When I run `sphere help categories`
     When I run `sphere help code`
-    When I run `sphere help types`
+    When I run `sphere help customers`
     When I run `sphere help products`
     When I run `sphere help projects`
+    When I run `sphere help tax`
+    When I run `sphere help types`
     Then the output should not match /=arg/
     Then the output should not match /arg\]/
     Then the output should not match /TODO/
