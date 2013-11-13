@@ -47,7 +47,7 @@ command [:project, :projects] do |c|
   end
 
   c.desc 'Select a project'
-  c.long_desc 'TODO'
+  c.long_desc 'Pre-select a project in order to omit the parameter project-key in subsequent commands'
   c.arg_name 'project-key', :optional
   c.command :select do |select|
     select.action do |global_options, options, args|
@@ -57,5 +57,4 @@ command [:project, :projects] do |c|
   end
 
   c.default_command :list
-
 end
