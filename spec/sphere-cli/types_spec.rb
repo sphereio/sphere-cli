@@ -37,7 +37,7 @@ module Sphere
           { :method => :post, :path => '/api/some-project/products/types' },
           { :status => 401, :body => '{}' })
 
-        expect { @pt.create ['{}'], { :project => 'some-project' } }.to raise_error /^Can't create product type: server returned with status '401'/
+        expect { @pt.create ['{}'], { :project => 'some-project' } }.to raise_error
       end
       it 'just works' do
         Excon.stub(
@@ -68,7 +68,7 @@ module Sphere
           { :method => :delete, :path => '/api/p/products/types/123' },
           { :status => 500, :body => '{}' })
 
-        expect { @pt.delete ['123'], { :project => 'p' }, {} }.to raise_error /Failed to delete product type with id '123' from project with key 'p': server returned with status '500'/
+        expect { @pt.delete ['123'], { :project => 'p' }, {} }.to raise_error
       end
       it 'just works' do
         Excon.stub(

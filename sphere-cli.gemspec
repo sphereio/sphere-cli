@@ -4,11 +4,11 @@ spec = Gem::Specification.new do |s|
   s.name = 'sphere-cli'
   s.version = Sphere::VERSION
   s.author = 'Commercetools GmbH'
-  s.email = 'sphere-support@commercetools.de'
+  s.email = 'support@sphere.io'
   s.homepage = 'http://www.commercetools.de'
   s.platform = Gem::Platform::RUBY
   s.required_ruby_version = '>= 1.9.1'
-  s.summary = 'command line interface to the sphere platform.'
+  s.summary = 'Command Line Interface (CLI) to the SPHERE.IO ecommerce platform.'
   s.files = Dir['bin/sphere'] + Dir['lib/**/*.rb']
   s.require_paths << 'lib'
   s.bindir = 'bin'
@@ -20,4 +20,7 @@ spec = Gem::Specification.new do |s|
   s.add_dependency('excon', '0.16.2')
   s.add_dependency('multipart-post', '1.2.0')
   s.add_dependency('gli', '2.5.4')
+  s.add_dependency('ruby-progressbar', '1.0.2')
+  s.add_dependency('ruby-progressbar', '1.0.2')
+  s.add_dependency('parallel', '0.5.19')
 end

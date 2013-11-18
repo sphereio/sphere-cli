@@ -4,7 +4,7 @@ module Sphere
     def select(args, global_options)
       project_key = get_project_key args, false
       res = sphere.get projects_list_url
-      sphere.ensure2XX "Can't select project with key '#{project_key}'"
+      #sphere.ensure2XX "Can't select project with key '#{project_key}'"
       project_selected = false
       performJSONOutput global_options, res do |data|
         data.each do |p|
@@ -22,7 +22,7 @@ module Sphere
     def details(args, global_options)
       project_key = get_project_key args
       res = sphere.get projects_list_url
-      sphere.ensure2XX "Can't get details of project with key '#{project_key}'"
+      #sphere.ensure2XX "Can't get details of project with key '#{project_key}'"
       performJSONOutput global_options, res do |data|
         data.each do |d|
           next unless d['key'] == project_key
@@ -39,7 +39,7 @@ module Sphere
 
     def list(global_options)
       res = sphere.get projects_list_url
-      sphere.ensure2XX "Can't get list of projects"
+      #sphere.ensure2XX "Can't get list of projects"
       performJSONOutput global_options, res do |data|
         if data.empty?
           puts 'There are no projects.'
@@ -56,7 +56,7 @@ module Sphere
 
       printStatusLine 'Getting organizations... '
       res = sphere.get organizations_list_url
-      sphere.ensure2XX "Can't get list of organizations"
+      #sphere.ensure2XX "Can't get list of organizations"
       org_id = nil
       org_name = nil
       performJSONOutput global_options, res do |data|
@@ -94,7 +94,7 @@ module Sphere
       d[:plan] = 'Medium' # TODO: specify via command line arg
       url = project_create_url
       res = sphere.post url, d.to_json
-      sphere.ensure2XX "Project creation failed"
+      #sphere.ensure2XX "Project creation failed"
       j = parse_JSON res
 
       add_country j['project']['key'], j['project']['version'], options[:c]
@@ -109,7 +109,7 @@ module Sphere
       return unless options[:'sample-data']
       printStatusLine "Creating sample data... "
       res = sphere.post project_sample_data_url(project_key), ''
-      sphere.ensure2XX "Adding sample data to new project failed"
+      #sphere.ensure2XX "Adding sample data to new project failed"
       printMsg "Done, enjoy!"
     end
 
@@ -123,7 +123,7 @@ module Sphere
       d = { :key => project_key, :version => project_version, :actions => [{ :action => 'setCountries', :countries => c }] }
       url = project_add_countries_url project_key
       res = sphere.put url, d.to_json
-      sphere.ensure2XX "Add countries to project with key '#{project_key}' failed"
+      #sphere.ensure2XX "Add countries to project with key '#{project_key}' failed"
     end
 
     def delete(args, global_options)
@@ -137,7 +137,7 @@ module Sphere
       end
 
       res = sphere.delete project_delete_url project_key
-      sphere.ensure2XX "Failed to delete project with key '#{project_key}'"
+      #sphere.ensure2XX "Failed to delete project with key '#{project_key}'"
       printMsg "Project '#{project_key}' deleted."
     end
 

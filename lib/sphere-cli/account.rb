@@ -6,17 +6,18 @@ module Sphere
       user, pass = get_login_info user, pass
 
       sphere.delete_credentials # delete old credentials
-      if sphere.login user, pass
+      err = sphere.login user, pass
+      if err.nil?
         printMsg "Successfully logged in as '#{user}'."
       else
-        raise "Failed to log in as '#{user}': #{sphere.error_message}"
+        raise "Failed to log in as '#{user}': #{err}"
       end
     end
 
     def logout
       sphere.ensureLoggedIn
       sphere.logout
-      sphere.ensure2XX3XX
+      #sphere.ensure2XX3XX
       printMsg 'Successfully logged out. Stored credentials are deleted.'
     end
 
@@ -28,16 +29,17 @@ module Sphere
       raise 'Please provide a name.' if name.empty?
       user, pass = get_login_info user, pass
 
-      if sphere.signup name, user, pass
+      err = sphere.signup name, user, pass
+      if err.nil?
         printMsg "Successfully signed up as '#{user}'."
       else
-        raise "Failed to sign up as '#{user}': #{sphere.error_message}"
+        raise "Failed to sign up as '#{user}': #{err}"
       end
     end
 
     def details(global_options)
       res = sphere.get account_details_url
-      sphere.ensure2XX "Can't get details for your account"
+      #sphere.ensure2XX "Can't get details for your account"
       performJSONOutput global_options, res do |a|
         puts "First name: #{a['firstName']}"
         puts "Last name: #{a['lastName']}"
@@ -54,7 +56,7 @@ module Sphere
         raise 'User account was NOT deleted.' unless verify_user == sphere.username
       end
       sphere.delete account_delete_url
-      sphere.ensure2XX "Failed to delete user account"
+      #sphere.ensure2XX "Failed to delete user account"
       sphere.delete_credentials
       printMsg "Successfully deleted user account."
     end

@@ -17,7 +17,7 @@ module Sphere
 
       url = customergroups_list_url @sphere_project_key
       res = sphere.get url
-      sphere.ensure2XX "Problem on fetching customer groups for project with key '#{@sphere_project_key}'"
+      #sphere.ensure2XX "Problem on fetching customer groups for project with key '#{@sphere_project_key}'"
       @groups = parse_JSON res
 
       duration=Time.now - start_time

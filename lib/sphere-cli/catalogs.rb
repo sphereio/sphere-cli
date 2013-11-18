@@ -22,7 +22,7 @@ module Sphere
 
     def list(global_options)
       res = sphere.get categories_list_url @sphere_project_key
-      sphere.ensure2XX "Can't get categories for project with id '#{@sphere_project_key}'"
+      #sphere.ensure2XX "Can't get categories for project with id '#{@sphere_project_key}'"
       performJSONOutput global_options, res do |data|
         if data.empty?
           puts "Project with key '#{@sphere_project_key}' has no categories."
@@ -40,7 +40,7 @@ module Sphere
 
       url = categories_list_url @sphere_project_key
       res = sphere.get url
-      sphere.ensure2XX "Problem on fetching categories for project with key '#{@sphere_project_key}'"
+      #sphere.ensure2XX "Problem on fetching categories for project with key '#{@sphere_project_key}'"
       @categories = parse_JSON res
 
       duration=Time.now - start_time
@@ -206,7 +206,7 @@ module Sphere
             j = create_json_data cell, row, h2i, current_parents, column_index, root_index
             url = category_create_url @sphere_project_key
             res = sphere.post url, j
-            sphere.ensure2XX "[row #{original_indexes[i]}] Problem on category creation"
+            #sphere.ensure2XX "[row #{original_indexes[i]}] Problem on category creation"
             data = parse_JSON res
             id = data['id']
           elsif action == 'changeName'
@@ -214,7 +214,7 @@ module Sphere
             j = update_json_data id, @id2version[id], cell
             url = category_update_url @sphere_project_key, id
             res = sphere.put url, j
-            sphere.ensure2XX "[row #{original_indexes[i]}] Problem on changing category name"
+            #sphere.ensure2XX "[row #{original_indexes[i]}] Problem on changing category name"
           end
           current_parents = current_parents.first column_index  # erase parents deeper as my own level
           current_parents[column_index] = id

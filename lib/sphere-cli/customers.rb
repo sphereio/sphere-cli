@@ -19,7 +19,7 @@ module Sphere
 
       url = customers_list_url @sphere_project_key
       res = sphere.get url
-      sphere.ensure2XX "Problem on fetching customers for project with key '#{@sphere_project_key}'"
+      #sphere.ensure2XX "Problem on fetching customers for project with key '#{@sphere_project_key}'"
       @customers = parse_JSON res
 
       duration=Time.now - start_time
@@ -131,7 +131,7 @@ module Sphere
         json = create_json_data row, data[:h2i]
         url = customer_create_url @sphere_project_key
         res = sphere.post url, json
-        sphere.ensure2XX "Problem on creating customer for project with key '#{@sphere_project_key}'"
+        #sphere.ensure2XX "Problem on creating customer for project with key '#{@sphere_project_key}'"
       end
       data[:rows].size
     end

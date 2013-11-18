@@ -1,6 +1,11 @@
+require 'parallel'
+require 'ruby-progressbar'
+
 module Sphere
 
   class Products
+
+    PARALLEL = 10
 
     ACTIONS = [nil, '', 'create', 'delete']
     NECESSARY_HEADERS = ['name', 'productType', 'variantId' ]
@@ -28,7 +33,7 @@ module Sphere
     def list(options, global_options)
       project_key = get_project_key options
       res = sphere.get products_list_url project_key
-      sphere.ensure2XX "Can't get list of products"
+      #sphere.ensure2XX "Can't get list of products"
       performJSONOutput global_options, res do |data|
         total = data['total']
         if total.nil? || total == 0
@@ -45,7 +50,7 @@ module Sphere
       input = validate_input_as_JSON args
       url = product_create_url project_key
       sphere.post url, input
-      sphere.ensure2XX "Can't create product."
+      #sphere.ensure2XX "Can't create product."
       printMsg 'Done'
     end
 
@@ -55,7 +60,7 @@ module Sphere
 
       url = product_types_list_url (@sphere_project_key)
       res = sphere.get url
-      sphere.ensure2XX "Can't download product types"
+      #sphere.ensure2XX "Can't download product types"
       data = parse_JSON res
       data.each do |pt|
         @id2product_type[pt['id']] = pt
@@ -73,7 +78,7 @@ module Sphere
         url = products_list_url (@sphere_project_key)
         url = url + "?page=#{page_index}" unless total == 0
         res = sphere.get url
-        sphere.ensure2XX "Can't download products"
+        #sphere.ensure2XX "Can't download products"
         data = parse_JSON res
         data['results'].each do |p|
           @products << p
@@ -124,17 +129,13 @@ module Sphere
 
       fetch_all
 
-      printStatusLine 'Deleting products... '
-      start_time = Time.now
       size = @products.size
-      @products.each_with_index do |p,i|
+      start_time = Time.now
+      progress = ProgressBar.create(:title => "Deleting products", :total => size)
+      Parallel.map(@products, :in_threads=>PARALLEL, :finish => lambda { |x,y| progress.increment }) do |p|
         d = publish_product_json_command p['id'], p['version'], true
-        sphere.put product_publish_url(@sphere_project_key, p['id']), d
+        sphere.put product_publish_url(@sphere_project_key, p['id']), d, [200,400]
         sphere.delete product_delete_url(@sphere_project_key, p['id'], p['version'] + 1)
-
-        n = i + 1
-        percents = (n * 100 / size).round
-        printStatusLine "Deleting products... #{n} of #{size} (#{percents}% done)"
       end
       duration = Time.now - start_time
       printStatusLine "Deleting products... Done, deleted #{pluralize size, 'product'} in #{"%4.2f" % duration} seconds\n"
@@ -429,7 +430,7 @@ module Sphere
       current_variant_id = nil
       current_product_type = nil
       row_start = 0
-      product_ids = []
+      product_data = []
       max = data[:rows].size
       data[:rows].each_with_index do |row, i|
         row_index = data[:original_indexes][i]
@@ -440,7 +441,11 @@ module Sphere
           current_images[:images] << img if img
           total_variants += 1
         else
-          total_products += create_product current_product, current_images, product_ids, row_start
+          if i > 0
+            d = { :p_data => current_product, :i_data => current_images }
+            product_data << d
+          end
+
           t = get_val row, 'productType', h2i
           current_product_type = @name2product_type[t] || @id2product_type[t]
           current_product = create_product_json_data row, h2i, current_product_type
@@ -450,31 +455,45 @@ module Sphere
         end
         n = i + 1
         percents = (n * 100 / max).round
-        printStatusLine "Importing products... line #{n} of #{max} (#{percents}% done)"
+        printStatusLine "Transforming products... line #{n} of #{max} (#{percents}% done)"
       end
-      total_products += create_product current_product, current_images, product_ids, row_start
+      d = { :p_data => current_product, :i_data => current_images }
+      product_data << d
+
+      product_ids = []
+      printStatusLine "Importing products... "
+      Parallel.each(product_data, :in_threads=>PARALLEL) do |data|
+        res = sphere.post product_create_url(@sphere_project_key), data[:p_data].to_json
+        j = parse_JSON res
+        id = j['id']
+        product_ids << id
+        i = data[:i_data]
+        if i[:images].size > 0
+          i[:id] = id
+          sphere.post product_images_import_url(@sphere_project_key, id), i.to_json
+        end
+      end
 
       printStatusLine "Importing products... publishing #{pluralize product_ids.size, 'product'} including their variants"
-      product_ids.each do |id|
+      Parallel.each(product_ids, :in_threads=>PARALLEL) do |id|
         d = publish_product_json_command id, 1
         sphere.put product_publish_url(@sphere_project_key, id), d
-        sphere.ensure2XX "Can't publish product with id '#{id}'"
+        #sphere.ensure2XX "Can't publish product with id '#{id}'"
       end
 
-      return total_products, total_variants
+      return product_data.size, total_variants
     end
 
     def create_product(prod_data, images_data, product_ids, row_index)
       return 0 unless prod_data
       res = sphere.post product_create_url(@sphere_project_key), prod_data.to_json
-      sphere.ensure2XX "[row #{row_index}] Can't create product"
+      #sphere.ensure2XX "[row #{row_index}] Can't create product"
       j = parse_JSON res
       id = j['id']
       product_ids << id
       if images_data[:images].size > 0
-        images_data[:id] = id
         sphere.post product_images_import_url(@sphere_project_key, id), images_data.to_json
-        sphere.ensure2XX "Problems on importing images for product '#{id}'"
+        #sphere.ensure2XX "Problems on importing images for product '#{id}'"
       end
       1
     end

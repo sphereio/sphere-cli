@@ -12,7 +12,7 @@ module Sphere
           { :method => :post, :path => '/login' },
           { :status => 500 })
 
-        expect { @account.login 'someone@example.com', 'secret' }.to raise_error "Failed to log in as 'someone@example.com': Unknown error with HTTP code 500"
+        expect { @account.login 'someone@example.com', 'secret' }.to raise_error
       end
       it 'decoding of failure feedback works' do
         Excon.stub(

@@ -16,16 +16,6 @@ module Sphere
 
     def initialize(connection)
       @connection = connection
-      @error_message = ""
-      @response = nil
-    end
-
-    def error_message
-      @error_message
-    end
-
-    def response
-      @response
     end
 
     def username
@@ -41,51 +31,53 @@ module Sphere
       folder.delete_user_info
     end
 
-    def checkLoginSignupResponse (username)
-      if @response.status != 303
+    def checkLoginSignupResponse (username, response)
+      error_message = nil
+      if response.status != 303
         msg = 'An account with this email address already exists.'
-        if @response.body.include? msg
-          @error_message = msg
+        if response.body.include? msg
+          error_message = msg
         else
-          @error_message = "Unknown error with HTTP code #{@response.status}"
+          error_message = "Unknown error with HTTP code #{response.status}"
         end
-        return false
+        return error_message
       end
-      cookies = @response.headers['Set-Cookie']
+      cookies = response.headers['Set-Cookie']
       res = cookies.match /#{SESSION_COOKIE_NAME}=(.*?);/
       if res
         folder.save_credentials res[1]
         folder.save_user_info username
-        return true
+        return error_message
       end
       res = cookies.match /#{FLASH_COOKIE_NAME}=(.*?);/
       if res and res[1].include? '%00'
-        @error_message = URI.decode(res[1].split('%00')[1]).gsub(/\+/, ' ').slice('error:'.size()..-1)
+        error_message = URI.decode(res[1].split('%00')[1]).gsub(/\+/, ' ').slice('error:'.size()..-1)
       else
-        @error_message = "Unknown error"
+        error_message = "Unknown error"
       end
-      return false
+      error_message
     end
 
     def signup (name, username, password)
-      @response = @connection.post( :path => signup_url,
-                                    :headers => {
-                                      'User-Agent' => USER_AGENT,
-                                      'Content-Type' => 'application/x-www-form-urlencoded'
-                                    },
-                                    :body => "name=#{CGI::escape(name)}&email=#{CGI::escape(username)}&password=#{CGI::escape(password)}&browser=sphere")
+      res = @connection.post( :path => signup_url,
+                              :headers => {
+                                'User-Agent' => USER_AGENT,
+                                'Content-Type' => 'application/x-www-form-urlencoded'
+                              },
+                              :body => "name=#{CGI::escape(name)}&email=#{CGI::escape(username)}&password=#{CGI::escape(password)}&browser=sphere")
 
-      return checkLoginSignupResponse username
+      return checkLoginSignupResponse username, res
     end
 
     def login (username, password)
-      @response = @connection.post( :path => login_url,
-                                    :headers => {
-                                      'User-Agent' => USER_AGENT,
-                                      'Content-Type' => 'application/x-www-form-urlencoded'
-                                    },
-                                    :body => "email=#{CGI::escape(username)}&password=#{CGI::escape(password)}&browser=sphere")
-      return checkLoginSignupResponse username
+      res = @connection.post( :expects => [303],
+                              :path => login_url,
+                              :headers => {
+                                'User-Agent' => USER_AGENT,
+                                'Content-Type' => 'application/x-www-form-urlencoded'
+                              },
+                              :body => "email=#{CGI::escape(username)}&password=#{CGI::escape(password)}&browser=sphere")
+      return checkLoginSignupResponse username, res
     end
 
     def ensureLoggedIn
@@ -97,31 +89,34 @@ module Sphere
     end
 
     def logout
-      @response = @connection.get( :path => logout_url,
-                                   :headers => {
-                                     'User-Agent' => USER_AGENT,
-                                     'Cookie' => "#{SESSION_COOKIE_NAME}=#{mc_token}",
-                                   })
+      res = @connection.get( :expects => [200, 303],
+                             :path => logout_url,
+                             :headers => {
+                               'User-Agent' => USER_AGENT,
+                               'Cookie' => "#{SESSION_COOKIE_NAME}=#{mc_token}",
+                             })
       delete_credentials
     end
 
-    def get(url)
-      @response = @connection.get( :path => url,
-                                   :headers => {
-                                     'User-Agent' => USER_AGENT,
-                                     'Cookie' => "#{SESSION_COOKIE_NAME}=#{mc_token}",
-                                   })
-      return @response.body
+    def get(url, expects=[200])
+      res = @connection.get( :expects => expects,
+                             :path => url,
+                             :headers => {
+                               'User-Agent' => USER_AGENT,
+                               'Cookie' => "#{SESSION_COOKIE_NAME}=#{mc_token}",
+                             })
+      return res.body
     end
 
-    def post(url, body)
-      @response = @connection.post( :path => url,
-                                    :headers => {
-                                      'User-Agent' => USER_AGENT,
-                                      'Cookie' => "#{SESSION_COOKIE_NAME}=#{mc_token}",
-                                    },
-                                    :body => body)
-      return @response.body
+    def post(url, body, expects=[200, 201])
+      res = @connection.post( :expects => expects,
+                              :path => url,
+                              :headers => {
+                                'User-Agent' => USER_AGENT,
+                                'Cookie' => "#{SESSION_COOKIE_NAME}=#{mc_token}",
+                              },
+                              :body => body)
+      return res.body
     end
 
     def post_image(url, image_url)
@@ -142,46 +137,26 @@ module Sphere
       return nil
     end
 
-    def put(url, body)
-      @response = @connection.put( :path => url,
-                                   :headers => {
-                                     'User-Agent' => USER_AGENT,
-                                     'Cookie' => "#{SESSION_COOKIE_NAME}=#{mc_token}",
-                                   },
-                                   :body => body)
-      return @response.body
+    def put(url, body, expects=[200])
+      res = @connection.put( :expects => expects,
+                             :path => url,
+                             :headers => {
+                               'User-Agent' => USER_AGENT,
+                               'Cookie' => "#{SESSION_COOKIE_NAME}=#{mc_token}",
+                             },
+                             :body => body)
+      return res.body
     end
 
-    def delete(url)
-      @response = @connection.delete( :path => url,
-                                      :headers => {
-                                        'User-Agent' => USER_AGENT,
-                                        'Cookie' => "#{SESSION_COOKIE_NAME}=#{mc_token}",
-                                      })
-      return @response.body
+    def delete(url, expects=[200])
+      res = @connection.delete( :expects => expects,
+                                :path => url,
+                                :headers => {
+                                  'User-Agent' => USER_AGENT,
+                                  'Cookie' => "#{SESSION_COOKIE_NAME}=#{mc_token}",
+                                })
+      return res.body
     end
 
-    def is2XX
-      @response.status / 100 == 2
-    end
-
-    def is2XX3XX
-      @response.status / 100 == 2 || response.status / 100 == 3
-    end
-
-    def ensure2XX(errorMessage = 'Communitcation problem')
-      h = @response.headers
-      e = 'No further information available'
-      begin
-        e = parse_JSON @response.body
-      rescue
-        e = "Response body: #{@response.body}" if response.body
-      end
-      raise "#{errorMessage}: server returned with status '#{@response.status}':\n  headers: #{h}\n  message: #{e}" unless is2XX
-    end
-
-    def ensure2XX3XX(errorMessage="Server returned #{@response.status}")
-      raise errorMessage unless is2XX3XX
-    end
   end
 end

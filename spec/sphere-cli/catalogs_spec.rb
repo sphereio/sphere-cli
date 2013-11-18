@@ -69,7 +69,7 @@ module Sphere
             { :method => :get, :path => '/api/myProject/categories' },
             { :status => 500, :body => '[]' })
 
-          expect { @cat.list nil }.to raise_error /Can't get categories for project with id 'myProject'/
+          expect { @cat.list nil }.to raise_error
         end
         it 'no categories' do
           Excon.stub(

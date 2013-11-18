@@ -16,7 +16,7 @@ module Sphere
 
     def fetch_all
       res = sphere.get project_tax_categories_url @project_key
-      sphere.ensure2XX "Can't get tax categories of project with key '#{@project_key}'"
+      #sphere.ensure2XX "Can't get tax categories of project with key '#{@project_key}'"
       @taxes = parse_JSON res
     end
 
@@ -39,7 +39,7 @@ module Sphere
       d = { :name => name, :description => desc}
       url = project_add_tax_category @project_key
       res = sphere.post url, d.to_json
-      sphere.ensure2XX "Add tax category named '#{name}' to project with key '#{@project_key}' failed"
+      #sphere.ensure2XX "Add tax category named '#{name}' to project with key '#{@project_key}' failed"
       printMsg "Done"
       parse_JSON res
     end
@@ -50,7 +50,7 @@ module Sphere
       d = { :id => tax_category_id, :version => tax_category_version, :actions => [{ :action => 'addTaxRate', :taxRate => t }] }
       url = project_add_tax_rate_url @project_key, tax_category_id
       res = sphere.put url, d.to_json
-      sphere.ensure2XX "Add tax rate named '#{name}' to tax category failed"
+      #sphere.ensure2XX "Add tax rate named '#{name}' to tax category failed"
       printMsg "Done"
       parse_JSON res
     end
