@@ -3,7 +3,7 @@ require 'spec_helper'
 module Sphere
   describe Products do
     before do
-      @prod = Sphere::Products.new "myProject", nil
+      @prod = Sphere::Products.new "myProject", { :para => 1 }
     end
     describe '#list' do
       it 'no products' do
