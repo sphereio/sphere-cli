@@ -46,6 +46,11 @@ switch [:j,:"json-pretty"], :negatable => false
 desc 'Output in raw JSON'
 switch [:J,:"json-raw"], :negatable => false
 
+desc 'Number of maximal parallel requests'
+arg_name 'max_parallel'
+default_value 3
+flag [:para], :type => Integer
+
 desc 'The username to use.'
 arg_name 'email'
 flag [:u,:user]

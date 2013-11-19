@@ -110,6 +110,8 @@ module Sphere
 
     def post(url, body, expects=[200, 201])
       res = @connection.post( :expects => expects,
+                              :connect_timeout => 300,
+                              :read_timeout => 300,
                               :path => url,
                               :headers => {
                                 'User-Agent' => USER_AGENT,

@@ -5,8 +5,6 @@ module Sphere
 
   class Products
 
-    PARALLEL = 10
-
     ACTIONS = [nil, '', 'create', 'delete']
     NECESSARY_HEADERS = ['name', 'productType', 'variantId' ]
     LANGUAGE_HEADERS = ['name', 'description', 'slug' ]
@@ -132,7 +130,7 @@ module Sphere
       size = @products.size
       start_time = Time.now
       progress = ProgressBar.create(:title => "Deleting products", :total => size)
-      Parallel.map(@products, :in_threads=>PARALLEL, :finish => lambda { |x,y| progress.increment }) do |p|
+      Parallel.map(@products, :in_threads => @global_options[:para], :finish => lambda { |x,y| progress.increment }) do |p|
         d = publish_product_json_command p['id'], p['version'], true
         sphere.put product_publish_url(@sphere_project_key, p['id']), d, [200,400]
         sphere.delete product_delete_url(@sphere_project_key, p['id'], p['version'] + 1)
@@ -461,41 +459,35 @@ module Sphere
       product_data << d
 
       product_ids = []
-      printStatusLine "Importing products... "
-      Parallel.each(product_data, :in_threads=>PARALLEL) do |data|
+      progress = ProgressBar.create(:title => "Importing products", :total => product_data.size)
+      Parallel.each(product_data, :in_threads => @global_options[:para], :finish => lambda { |x,y| progress.increment }) do |data|
         res = sphere.post product_create_url(@sphere_project_key), data[:p_data].to_json
         j = parse_JSON res
         id = j['id']
         product_ids << id
-        i = data[:i_data]
-        if i[:images].size > 0
-          i[:id] = id
-          sphere.post product_images_import_url(@sphere_project_key, id), i.to_json
+        data[:i_data][:id] = id # store image id for later image request
+      end
+
+      progress = ProgressBar.create(:title => "Importing images", :total => product_data.size)
+      Parallel.each(product_data, :in_threads => 1, :finish => lambda { |x,y| progress.increment }) do |data|
+        img = data[:i_data]
+        if img[:images].size > 0
+          id = img[:id]
+          img[:images].each_slice(1) do | images|
+            d = { :id => id, :images => images }
+            sphere.post product_images_import_url(@sphere_project_key, id), d.to_json
+          end
         end
       end
 
-      printStatusLine "Importing products... publishing #{pluralize product_ids.size, 'product'} including their variants"
-      Parallel.each(product_ids, :in_threads=>PARALLEL) do |id|
+      progress = ProgressBar.create(:title => "Publishing products", :total => product_ids.size)
+      Parallel.each(product_ids, :in_threads => @global_options[:para], :finish => lambda { |x,y| progress.increment }) do |id|
         d = publish_product_json_command id, 1
         sphere.put product_publish_url(@sphere_project_key, id), d
         #sphere.ensure2XX "Can't publish product with id '#{id}'"
       end
 
       return product_data.size, total_variants
-    end
-
-    def create_product(prod_data, images_data, product_ids, row_index)
-      return 0 unless prod_data
-      res = sphere.post product_create_url(@sphere_project_key), prod_data.to_json
-      #sphere.ensure2XX "[row #{row_index}] Can't create product"
-      j = parse_JSON res
-      id = j['id']
-      product_ids << id
-      if images_data[:images].size > 0
-        sphere.post product_images_import_url(@sphere_project_key, id), images_data.to_json
-        #sphere.ensure2XX "Problems on importing images for product '#{id}'"
-      end
-      1
     end
 
     # TODO: Allow user to upload local files as images (via command line option)
