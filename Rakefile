@@ -57,21 +57,22 @@ task :perform_release do
   sh "git checkout master && git pull" # This is necessary as Jenkins builds on individual commits and not master.
   sh "git tag | grep jenkins | xargs -n1 git tag -d" # Delete jenkins tags
 
+  puts "Calculate version..."
+  parts = version.split "."
+  bugfix_version = parts[2].to_i
+  version = "#{parts[0]}.#{parts[1]}.#{bugfix_version + 1}"
+  next_version = "#{parts[0]}.#{parts[1]}.#{bugfix_version + 2}"
+
   puts "rake release..."
   Rake::Task["release"].execute # This sucks on jenkins as it pushes all jenkins build tags
 
-  puts "Updating version.rb file..."
-  parts = version.split "."
-  bumped_bugfix = parts[2].to_i + 1
-  new_version = "#{parts[0]}.#{parts[1]}.#{bumped_bugfix}"
-
   file = 'lib/sphere-cli/version.rb'
   c = File.read file
-  c = c.gsub version, new_version
+  c = c.gsub version, next_version
   File.open(file, 'w') { |f| f.puts c }
 
   puts "Commit and push changes to version.rb"
-  sh "git commit #{file} -m '[automation] Bump version to #{new_version}'."
+  sh "git commit #{file} -m '[automation] Bump version to #{next_version}'."
   sh "git push origin master"
 end
 
