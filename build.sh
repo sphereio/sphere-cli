@@ -2,7 +2,7 @@
 
 run_tests() {
     rspec1.9.1 --format html -o testresults/rspec.html -r rspec_junit_formatter --format RspecJunitFormatter -o testresults/rspec.xml --format nested --color --tag ~skip spec
-    cucumber1.9.1 --color --tags ~@wip --format pretty --format html --out result.html
+    #cucumber1.9.1 --color --tags ~@wip --format pretty --format html --out result.html
 }
 
 get_pkg() {
