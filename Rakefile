@@ -61,13 +61,17 @@ task :perform_release do
   parts = version.split "."
   bugfix_version = parts[2].to_i
   version = "#{parts[0]}.#{parts[1]}.#{bugfix_version + 1}"
-  next_version = "#{parts[0]}.#{parts[1]}.#{bugfix_version + 2}"
+
+  file = 'lib/sphere-cli/version.rb'
+  version_file_content = "module Sphere\n  VERSION = '#{version}'\nend"
+  File.open(file, 'w') { |f| f.puts version_file_content }
 
   puts "rake release..."
   Rake::Task["release"].execute
 
+  next_version = "#{parts[0]}.#{parts[1]}.#{bugfix_version + 2}"
   file = 'lib/sphere-cli/version.rb'
-  version_file_content = "module Sphere\nVERSION = '#{next_version}'\nend"
+  version_file_content = "module Sphere\n  VERSION = '#{next_version}'\nend"
   File.open(file, 'w') { |f| f.puts version_file_content }
 
   puts "Commit and push changes to version.rb"
