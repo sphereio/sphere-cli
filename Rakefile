@@ -66,6 +66,10 @@ task :perform_release do
   version_file_content = "module Sphere\n  VERSION = '#{version}'\nend"
   File.open(file, 'w') { |f| f.puts version_file_content }
 
+  puts "Commit and push changes to version.rb"
+  sh "git commit #{file} -m '[automation] Bump release version to #{next_version}'."
+  sh "git push origin master"
+
   puts "rake release..."
   Rake::Task["release"].execute
 
@@ -75,7 +79,7 @@ task :perform_release do
   File.open(file, 'w') { |f| f.puts version_file_content }
 
   puts "Commit and push changes to version.rb"
-  sh "git commit #{file} -m '[automation] Bump version to #{next_version}'."
+  sh "git commit #{file} -m '[automation] Bump development version to #{next_version}'."
   sh "git push origin master"
 end
 
