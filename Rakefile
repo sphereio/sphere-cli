@@ -64,12 +64,11 @@ task :perform_release do
   next_version = "#{parts[0]}.#{parts[1]}.#{bugfix_version + 2}"
 
   puts "rake release..."
-  Rake::Task["release"].execute # This sucks on jenkins as it pushes all jenkins build tags
+  Rake::Task["release"].execute
 
   file = 'lib/sphere-cli/version.rb'
-  c = File.read file
-  c = c.gsub version, next_version
-  File.open(file, 'w') { |f| f.puts c }
+  version_file_content = "module Sphere\nVERSION = '#{next_version}'\nend"
+  File.open(file, 'w') { |f| f.puts version_file_content }
 
   puts "Commit and push changes to version.rb"
   sh "git commit #{file} -m '[automation] Bump version to #{next_version}'."
