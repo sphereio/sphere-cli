@@ -6,6 +6,10 @@ pkg/
 coverage/
 testresults/
 tmp/
+debian/files
+debian/sphere-cli-download*
+publish.properties
+result.html
 *.gem
 *.pkg
 *.deb
