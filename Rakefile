@@ -60,19 +60,19 @@ task :perform_release do
   puts "Calculate version..."
   parts = version.split "."
   bugfix_version = parts[2].to_i
-  version = "#{parts[0]}.#{parts[1]}.#{bugfix_version + 1}"
+  release_version = "#{parts[0]}.#{parts[1]}.#{bugfix_version + 1}"
+  next_version = "#{parts[0]}.#{parts[1]}.#{bugfix_version + 2}"
 
   file = 'lib/sphere-cli/version.rb'
-  version_file_content = "module Sphere\n  VERSION = '#{version}'\nend"
+  version_file_content = "module Sphere\n  VERSION = '#{release_version}'\nend"
   File.open(file, 'w') { |f| f.puts version_file_content }
 
   puts "Commit changes to version.rb"
-  sh "git commit #{file} -m '[automation] Bump release version to #{next_version}'."
+  sh "git commit #{file} -m '[automation] Bump release version to #{release_version}'."
 
   puts "rake release..."
   Rake::Task["release"].execute
 
-  next_version = "#{parts[0]}.#{parts[1]}.#{bugfix_version + 2}"
   file = 'lib/sphere-cli/version.rb'
   version_file_content = "module Sphere\n  VERSION = '#{next_version}'\nend"
   File.open(file, 'w') { |f| f.puts version_file_content }
