@@ -1,6 +1,6 @@
 desc 'Manage products for a project'
 long_desc %(
-  The product[s] subcommand allows to manaage your products by importing and exporting them as CSV.
+  The product[s] subcommand allows to manage your products by importing and exporting them as CSV.
 )
 command [:product, :products] do |c|
 
