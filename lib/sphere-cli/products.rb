@@ -435,10 +435,10 @@ module Sphere
         if is_variant? row, h2i
           current_product[:variants] << variant_json_data(row, h2i, current_product_type)
           current_variant_id += 1
-          img = image_json_data row, h2i, current_variant_id
-          current_images[:images] << img if img
+          imgs = image_json_data row, h2i, current_variant_id, row_index
+          current_images[:images] += imgs
           total_variants += 1
-        else
+        else # new product
           if i > 0
             d = { :p_data => current_product, :i_data => current_images }
             product_data << d
@@ -447,7 +447,7 @@ module Sphere
           t = get_val row, 'productType', h2i
           current_product_type = @name2product_type[t] || @id2product_type[t]
           current_product = create_product_json_data row, h2i, current_product_type
-          current_images = import_image_json_data row, h2i
+          current_images = import_image_json_data row, h2i, row_index
           current_variant_id = 1
           row_start = row_index
         end
@@ -538,22 +538,34 @@ module Sphere
       d.merge! variant_attributes(variant, h2i, product_type)
     end
 
-    def import_image_json_data(row, h2i)
-      i = image_json_data(row, h2i)
-      a = i == nil ? [] : [i]
-      d = { :images => a }
+    def import_image_json_data(row, h2i, row_index)
+      imgs = image_json_data(row, h2i, 1, row_index)
+      d = { :images => imgs }
     end
 
-    def image_json_data(row, h2i, variant_id = 1) # TODO: support multiple images
-      url = get_val row, 'images', h2i
-      return nil unless url
-      label = get_val row, 'imageLabels', h2i
-      filename = nil # TODO: calculate file name from URL
-      filename = label unless filename
-      i = { :variantId => variant_id, :url => url }
-      i[:label] = label if label
-      i[:filename] = filename if filename
-      i
+    def image_json_data(row, h2i, variant_id, row_index)
+      images = get_val row, 'images', h2i
+      imageLabels = get_val row, 'imageLabels', h2i
+      return [] unless images
+      ignoreLabel = false
+      ignoreLabel = true unless imageLabels
+      urls = images.split VALUES_DELIM
+      unless ignoreLabel
+        labels = imageLabels.split VALUES_DELIM
+        if urls.size != labels.size
+          raise "[row #{row_index}] Number of image labels do not correspond to number of images"
+        end
+      end
+      data = []
+      urls.each_with_index do |url, index|
+        img = { :variantId => variant_id, :url => url }
+        unless ignoreLabel
+          img[:label] = labels[index]
+          img[:filename] = labels[index]
+        end
+        data << img
+      end
+      data
     end
 
     def publish_product_json_command(product_id, product_version, unpublish=false)

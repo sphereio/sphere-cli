@@ -69,13 +69,33 @@ module Sphere
       it 'image import' do
         rows = CSV.parse 'bar,"http://sphere.io/foo.jpg"'
         h2i = { 'imageLabels' => 0, 'images' => 1 }
-        d = @prod.import_image_json_data rows[0], h2i
+        d = @prod.import_image_json_data rows[0], h2i, 1
         j = JSON.parse d.to_json
         j['images'].size.should eq 1
         j['images'][0]['variantId'].should eq 1
         j['images'][0]['url'].should eq 'http://sphere.io/foo.jpg'
         j['images'][0]['label'].should eq 'bar'
         j['images'][0]['filename'].should eq 'bar'
+      end
+      it 'number of images labels not number of images' do
+        rows = CSV.parse 'foo,"http://sphere.io/foo.jpg;http://sphere.io/bar.gif"'
+        h2i = { 'imageLabels' => 0, 'images' => 1 }
+        expect { @prod.import_image_json_data rows[0], h2i, 1 }.to raise_error
+      end
+      it 'multi image import with labels' do
+        rows = CSV.parse 'foo;bar,"http://sphere.io/foo.jpg;http://sphere.io/bar.gif"'
+        h2i = { 'imageLabels' => 0, 'images' => 1 }
+        d = @prod.import_image_json_data rows[0], h2i, 1
+        j = JSON.parse d.to_json
+        j['images'].size.should eq 2
+        j['images'][0]['variantId'].should eq 1
+        j['images'][0]['url'].should eq 'http://sphere.io/foo.jpg'
+        j['images'][0]['label'].should eq 'foo'
+        j['images'][0]['filename'].should eq 'foo'
+        j['images'][1]['variantId'].should eq 1
+        j['images'][1]['url'].should eq 'http://sphere.io/bar.gif'
+        j['images'][1]['label'].should eq 'bar'
+        j['images'][1]['filename'].should eq 'bar'
       end
     end
     describe '#validate_categories' do
