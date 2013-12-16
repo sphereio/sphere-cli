@@ -1,4 +1,5 @@
 require 'excon'
+require 'base64'
 
 require "net/http"
 require "net/https"
@@ -14,8 +15,10 @@ module Sphere
     SESSION_COOKIE_NAME = "PLAY_SESSION"
     FLASH_COOKIE_NAME = "PLAY_FLASH"
 
-    def initialize(connection)
+    def initialize(connection, auth_connection=nil, api_connection=nil)
       @connection = connection
+      @auth_connection = auth_connection
+      @api_connection = api_connection
     end
 
     def username
@@ -118,6 +121,38 @@ module Sphere
                                 'Cookie' => "#{SESSION_COOKIE_NAME}=#{mc_token}",
                               },
                               :body => body)
+      return res.body
+    end
+
+    def get_token(project_key)
+      res = sphere.get projects_list_url
+      projects = JSON.parse res
+      projects.each do |proj|
+        next unless proj['key'] == project_key
+        client_id = proj['clients'][0]['id']
+        client_secret = proj['clients'][0]['secret']
+
+        encoded = Base64.urlsafe_encode64 "#{client_id}:#{client_secret}"
+        headers = { 'Authorization' => "Basic #{encoded}", 'Content-Type' => 'application/x-www-form-urlencoded' }
+        body = "grant_type=client_credentials&scope=manage_project:#{project_key}"
+        res = @auth_connection.post :expects => [200], :path => '/oauth/token', :headers => headers, :body => body
+        raise "Problems on getting access token: #{res.body}" unless res.status == 200
+        return JSON.parse(res.body)['access_token']
+      end
+      raise "Project with key '#{project_key}' does not exist."
+    end
+
+    def api_post(project_key, url, body, expects=[200, 201])
+      auth_token = get_token project_key
+      res = @api_connection.post( :expects => expects,
+                                  :connect_timeout => 300,
+                                  :read_timeout => 300,
+                                  :path => url,
+                                  :headers => {
+                                    'User-Agent' => USER_AGENT,
+                                    'Authorization' => "Bearer #{auth_token}",
+                                  },
+                                  :body => body)
       return res.body
     end
 

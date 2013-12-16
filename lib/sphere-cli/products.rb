@@ -25,7 +25,12 @@ module Sphere
       @cat_impl = Sphere::Catalogs.new project_key
       @tax_impl = tax_impl
       @group_impl = Sphere::CustomerGroups.new project_key
+      @external_images = false
       set_language_attributes LANGUAGE_HEADERS
+    end
+
+    def set_external_images(options)
+      @external_images = true if options[:external_images]
     end
 
     def list(options, global_options)
@@ -471,11 +476,35 @@ module Sphere
       progress = ProgressBar.create(:title => "Importing images", :total => product_data.size)
       Parallel.each(product_data, :in_threads => 1, :finish => lambda { |x,y| progress.increment }) do |data|
         img = data[:i_data]
+        productId2version = {}
         if img[:images].size > 0
           id = img[:id]
-          img[:images].each_slice(1) do | images|
-            d = { :id => id, :images => images }
-            sphere.post product_images_import_url(@sphere_project_key, id), d.to_json
+          img[:images].each_slice(1) do |image|
+            d = { :id => id, :images => image }
+            if not @external_images
+              sphere.post product_images_import_url(@sphere_project_key, id), d.to_json
+              next
+            end
+            url = Sphere::MCAPI::product_add_external_images_url(@sphere_project_key, id)
+            version = 1
+            if productId2version.include? id
+              version = productId2version[id]
+            end
+            data = {
+              :version => version,
+              :actions => [{
+                :action => 'addExternalImage',
+                :variantId => image[0][:variantId],
+                :image => {
+                  :url => image[0][:url],
+# TODO                  label => image[0][:label],
+                  :dimensions => { :w => 0, :h => 0 }
+                }
+              }]
+            }
+            res = sphere.api_post @sphere_project_key, url, data.to_json
+            json = JSON.parse res
+            productId2version[id] = json['version']
           end
         end
       end

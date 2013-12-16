@@ -64,6 +64,16 @@ arg_name 'url'
 default_value 'https://admin.sphere.io'
 flag [:s,:"mc-server"]
 
+desc 'Use specified API server instead of the default one.'
+arg_name 'url'
+default_value 'https://api.sphere.io'
+flag [:api,:"api-server"]
+
+desc 'Use specified AUTH server instead of the default one.'
+arg_name 'url'
+default_value 'https://auth.sphere.io'
+flag [:auth,:"auth-server"]
+
 desc 'Use specified WWW server instead of the default one.'
 arg_name 'url'
 default_value 'http://sphere.io'
@@ -106,7 +116,7 @@ pre do |global,command,options,args|
   $quiet = global[:q]
   $force = global[:f]
 
-  $sphere_client_instance = Sphere::Client.new(Excon.new(global[:s]))
+  $sphere_client_instance = Sphere::Client.new(Excon.new(global[:s]), Excon.new(global[:auth]), Excon.new(global[:api]))
   $sphere_folder_instance = Sphere::Folder.new
   $sphere_code_instance = Sphere::Code.new global[:s]
   $sphere_download_instance = Sphere::Download.new global[:w]

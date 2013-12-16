@@ -44,6 +44,8 @@ command [:product, :products] do |c|
   c.command [:import] do |import|
     import.arg_name 'lang'
     import.flag [:lang], :desc => "Default language for import", :type => String, :default_value => 'en'
+    import.arg_name 'external_images'
+    import.switch [:external_images], :desc => "Don't import images, reference to external URLs", :negatable => false
 
     import.action do |global_options,options,args|
       sphere.ensureLoggedIn
@@ -51,6 +53,7 @@ command [:product, :products] do |c|
       set_language options
       input = get_input args
       sphere_products = Sphere::Products.new project_key, global_options
+      sphere_products.set_external_images options
       sphere_products.fetch_all
       sphere_products.import input
     end
