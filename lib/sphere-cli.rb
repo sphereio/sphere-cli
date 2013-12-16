@@ -21,4 +21,4 @@ require 'set'
 require 'json'
 require 'open-uri'
 include Sphere::CommandBase
-include Sphere::API
+include Sphere::MCAPI

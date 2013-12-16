@@ -1,6 +1,6 @@
 module Sphere
 
-  module API
+  module MCAPI
     # ACCOUNT
     def login_url() '/login' end
     def logout_url() '/logout' end
@@ -55,6 +55,10 @@ module Sphere
     # CUSTOMERS
     def customers_list_url(project_key) "/api/#{project_key}/customers" end
     def customer_create_url(project_key) customers_list_url project_key end
+  end
+
+  module API
+    def product_add_external_images_url(project_key, product_id) "/#{project_key}/products/#{product_id}" end
   end
 
   module WWW
