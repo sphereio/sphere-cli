@@ -1,3 +1,6 @@
 language: ruby
 rvm:
   - 1.9.3
+before_script:
+  - echo 'require "coveralls"' | cat - spec/spec_helper.rb > /tmp/out && mv /tmp/out spec/spec_helper.rb
+  - echo 'Coveralls.wear!' | cat - spec/spec_helper.rb > /tmp/out && mv /tmp/out spec/spec_helper.rb
