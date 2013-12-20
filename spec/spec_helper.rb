@@ -5,6 +5,9 @@
 #require 'simplecov-rcov'
 #SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
 
+require 'coveralls'
+Coveralls.wear!
+
 require 'sphere-cli'
 require 'gli-extensions'
 
