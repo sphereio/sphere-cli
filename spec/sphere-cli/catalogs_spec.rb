@@ -143,7 +143,7 @@ create,,myRoot,,
         @cat.fetch_all
 
         Excon.stub(
-          { :method => :put, :path => '/api/myProject/categories/123', :body => '{"id":"123","version":7,"actions":[{"action":"changeName","name":{"en":"foo"}}]}' },
+          { :method => :post, :path => '/api/myProject/categories/123', :body => '{"id":"123","version":7,"actions":[{"action":"changeName","name":{"en":"foo"}}]}' },
           { :status => 200, :body => '{}' })
 
         r = <<-eos

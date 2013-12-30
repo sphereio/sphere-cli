@@ -49,7 +49,7 @@ module Sphere
       t = { :name => name, :amount => amount, :country => country, :includedInPrice => include_in_price }
       d = { :id => tax_category_id, :version => tax_category_version, :actions => [{ :action => 'addTaxRate', :taxRate => t }] }
       url = project_add_tax_rate_url @project_key, tax_category_id
-      res = sphere.put url, d.to_json
+      res = sphere.post url, d.to_json
       #sphere.ensure2XX "Add tax rate named '#{name}' to tax category failed"
       printMsg "Done"
       parse_JSON res

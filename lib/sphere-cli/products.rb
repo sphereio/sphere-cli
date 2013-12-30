@@ -137,7 +137,7 @@ module Sphere
       progress = ProgressBar.create(:title => "Deleting products", :total => size)
       Parallel.map(@products, :in_threads => @global_options[:para], :finish => lambda { |x,y| progress.increment }) do |p|
         d = publish_product_json_command p['id'], p['version'], true
-        sphere.put product_publish_url(@sphere_project_key, p['id']), d, [200,400]
+        sphere.post product_publish_url(@sphere_project_key, p['id']), d, [200,400]
         sphere.delete product_delete_url(@sphere_project_key, p['id'], p['version'] + 1)
       end
       duration = Time.now - start_time
@@ -512,7 +512,7 @@ module Sphere
       progress = ProgressBar.create(:title => "Publishing products", :total => product_ids.size)
       Parallel.each(product_ids, :in_threads => @global_options[:para], :finish => lambda { |x,y| progress.increment }) do |id|
         d = publish_product_json_command id, 1
-        sphere.put product_publish_url(@sphere_project_key, id), d
+        sphere.post product_publish_url(@sphere_project_key, id), d
         #sphere.ensure2XX "Can't publish product with id '#{id}'"
       end
 

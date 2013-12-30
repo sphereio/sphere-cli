@@ -174,17 +174,6 @@ module Sphere
       return nil
     end
 
-    def put(url, body, expects=[200])
-      res = @connection.put( :expects => expects,
-                             :path => url,
-                             :headers => {
-                               'User-Agent' => USER_AGENT,
-                               'Cookie' => "#{SESSION_COOKIE_NAME}=#{mc_token}",
-                             },
-                             :body => body)
-      return res.body
-    end
-
     def delete(url, expects=[200])
       res = @connection.delete( :expects => expects,
                                 :path => url,
