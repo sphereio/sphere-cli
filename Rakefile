@@ -132,6 +132,7 @@ def pkg
 end
 
 def assemble_cli(target_dir)
+  puts "assemble_cli"
   sh %{ cp -R 'bin' '#{target_dir}' }
   sh "sed -i '' -e 's;^#!.*;#!/usr/local/heroku/ruby/bin/ruby;' '#{target_dir}/bin/sphere'"
   sh "cp -R 'lib' '#{target_dir}'"
@@ -139,6 +140,7 @@ end
 
 GEM_BLACKLIST = %w( bundler sphere-cli )
 def assemble_gems(target_dir)
+  puts "assemble_gems"
   gems = %x{ env BUNDLE_WITHOUT="development:test" bundle show }
   exit 1 unless $? == 0
   gems.split("\n").each do |line|
@@ -153,6 +155,7 @@ def assemble_gems(target_dir)
 end
 
 def assemble_ruby(target_dir)
+  puts "assemble_ruby"
   Dir.mktmpdir do |t|
     Dir.chdir t do
       sh %{ curl http://heroku-toolbelt.s3.amazonaws.com/ruby.pkg -o ruby.pkg }
