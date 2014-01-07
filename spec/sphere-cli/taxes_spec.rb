@@ -32,7 +32,7 @@ module Sphere
     end
     it '#add_tax_rate' do
       Excon.stub(
-        { :method => :post, :path => '/api/p/tax-categories/123', :body => '{"id":"123","version":7,"actions":[{"action":"addTaxRate","taxRate":{"name":"myRate","amount":0.19,"country":"DE","includedInPrice":true}}]}' },
+        { :method => :put, :path => '/api/p/tax-categories/123', :body => '{"id":"123","version":7,"actions":[{"action":"addTaxRate","taxRate":{"name":"myRate","amount":0.19,"country":"DE","includedInPrice":true}}]}' },
         { :status => 200, :body => '{}' })
       @taxes.add_tax_rate '123', 7, 'myRate', 0.19, 'DE', true
     end

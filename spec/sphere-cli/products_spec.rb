@@ -1,4 +1,4 @@
-  require 'spec_helper'
+require 'spec_helper'
 
 module Sphere
   describe Products do
@@ -244,7 +244,7 @@ module Sphere
           { :method => :post, :path => '/api/myProject/products', :body => '{"productType":{"id":"123","typeId":"product-type"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":{"en":"myProd"},"slug":{"en":"myprod"},"masterVariant":{"attributes":[]},"variants":[]}' },
           { :status => 200, :body => '{"id":"abc","version":1}' })
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/products/abc', :body => '{"id":"abc","version":1,"actions":[{"action":"publish"}]}' },
+          { :method => :put, :path => '/api/myProject/products/abc', :body => '{"id":"abc","version":1,"actions":[{"action":"publish"}]}' },
           { :status => 200 })
 
         r = <<-eos
@@ -261,7 +261,7 @@ myProd,pt,t1
           { :method => :post, :path => '/api/myProject/products', :body => '{"productType":{"id":"123","typeId":"product-type"},"taxCategory":{"id":"t1","typeId":"tax-category"},"name":{"de":"meinProd","en":"myProd"},"slug":{"de":"meinprod","en":"myprod"},"description":{"de":"tolles Produkt","en":"awesome product"},"masterVariant":{"attributes":[]},"variants":[]}' },
           { :status => 200, :body => '{"id":"abc","version":1}' })
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/products/abc', :body => '{"id":"abc","version":1,"actions":[{"action":"publish"}]}' },
+          { :method => :put, :path => '/api/myProject/products/abc', :body => '{"id":"abc","version":1,"actions":[{"action":"publish"}]}' },
           { :status => 200 })
 
         r = <<-eos
@@ -282,7 +282,7 @@ meinProd,myProd,tolles Produkt,awesome product,pt,t1
           { :method => :post, :path => '/api/myProject/products', :body => body },
           { :status => 200, :body => '{"id":"abc","version":1}' })
         Excon.stub(
-          { :method => :post, :path => '/api/myProject/products/abc', :body => '{"id":"abc","version":1,"actions":[{"action":"publish"}]}' },
+          { :method => :put, :path => '/api/myProject/products/abc', :body => '{"id":"abc","version":1,"actions":[{"action":"publish"}]}' },
           { :status => 200, :body => '{"id":"abc","version":2}' })
 
         r = <<-eos

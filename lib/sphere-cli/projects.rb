@@ -122,7 +122,7 @@ module Sphere
       printStatusLine "Add countries to project... "
       d = { :key => project_key, :version => project_version, :actions => [{ :action => 'setCountries', :countries => c }] }
       url = project_add_countries_url project_key
-      res = sphere.post url, d.to_json
+      res = sphere.put url, d.to_json
       #sphere.ensure2XX "Add countries to project with key '#{project_key}' failed"
     end
 

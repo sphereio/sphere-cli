@@ -213,7 +213,7 @@ module Sphere
             updates += 1
             j = update_json_data id, @id2version[id], cell
             url = category_update_url @sphere_project_key, id
-            res = sphere.post url, j
+            res = sphere.put url, j
             #sphere.ensure2XX "[row #{original_indexes[i]}] Problem on changing category name"
           end
           current_parents = current_parents.first column_index  # erase parents deeper as my own level
