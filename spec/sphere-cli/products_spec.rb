@@ -4,6 +4,7 @@ module Sphere
   describe Products do
     before do
       @prod = Sphere::Products.new "myProject", { :para => 1 }
+      $all_slugs = nil
     end
     describe '#list' do
       it 'no products' do

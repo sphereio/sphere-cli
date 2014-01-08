@@ -4,6 +4,7 @@ module Sphere
   describe Catalogs do
     before do
       @cat = Sphere::Catalogs.new "myProject"
+      $all_slugs = nil
     end
     describe '#create_json_data' do
       it 'catalog should have no parent' do

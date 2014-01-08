@@ -24,10 +24,22 @@ module Sphere
 
     def slugify(name)
       if name.class == String
-        name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+        unique_and_valid_slug name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
       else
         name.each_with_object({}) {|(k, v), h| h[k] = slugify(v) }
       end
+    end
+
+    def unique_and_valid_slug(slug, appendix='')
+      $all_slugs = [] unless $all_slugs
+      s = "#{slug}#{appendix}"
+      s = "#{s}#{10 + Random.rand(89)}" if s.length < 2
+      s = s[0, 59] if s.length > 60
+      unless $all_slugs.include? s
+        $all_slugs << s
+        return s
+      end
+      return unique_and_valid_slug s, Random.rand(9999) # 10000 different slugs with the same prefix possible
     end
 
     # prints the specified text to output, unless running in quiet mode
