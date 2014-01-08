@@ -176,9 +176,11 @@ module Sphere
 
       rows = []
       @products.each do |p|
+        pt_id = p['productType']['id']
+        product_type = @id2product_type[pt_id]
         row = [''] # action
         row << p['id'].to_s
-        row << jsonValue(p, %w(productType id))
+        row << pt_id
         row << lang_val(p['name'])
         base_columns.each do |c|
           v = p[c]
@@ -190,13 +192,7 @@ module Sphere
         end
         row << add_categories(p)
         row << jsonValue(p, %w(masterVariant id))
-        variant_columns.each do |c|
-          row << jsonValue(p, ['masterVariant', c])
-        end
-        variant_attributes_columns.each do |c|
-          row << jsonValue(p, ['masterVariant', 'attributes', "[name=#{c}/value]"])
-        end
-        row << add_images(p['masterVariant'])
+        row = row + add_variant_attributes(p['masterVariant'], variant_columns, variant_attributes_columns)
         rows << row
         p['variants'].each do |v|
           row = ['','','',''] # 'action,id,productType,name'
@@ -204,14 +200,8 @@ module Sphere
              row << ''
           end
           row << '' # categories
-          row << jsonValue(v, %w(id))
-          variant_columns.each do |c|
-            row << jsonValue(v, [c])
-          end
-          variant_attributes_columns.each do |c|
-            row << jsonValue(v, ['attributes', "[name=#{c}/value]"])
-          end
-          row << add_images(v)
+          row << jsonValue(v, %w(id)) # variantId
+          row = row + add_variant_attributes(v, variant_columns, variant_attributes_columns)
           rows << row
         end
       end
@@ -221,6 +211,18 @@ module Sphere
         puts r.to_csv
       end
       return header, rows
+    end
+
+    def add_variant_attributes(v, variant_columns, variant_attributes_columns)
+      attribs = []
+      variant_columns.each do |c|
+        attribs << jsonValue(v, [c])
+      end
+      variant_attributes_columns.each do |c|
+        attribs << jsonValue(v, ['attributes', "[name=#{c}/value]"])
+      end
+      attribs << add_images(v)
+      attribs
     end
 
     def add_categories(item)
