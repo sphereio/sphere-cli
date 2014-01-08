@@ -22,21 +22,24 @@ Feature: Managing product types works
       "description":"Blabla",
       "attributes":[
         { "name":"a1","label":{ "en":"a1" },"type":"text",    "isVariant":true,"isRequired":true,"inputHint":"SingleLine" },
-        { "name":"a2","label":{ "en":"a2" },"type":"enum",    "isVariant":true,"isRequired":true,"inputHint":"SingleLine","values":[{"key":"a","label":"A"},{"key":"b","label":"B"}] },
+        { "name":"a2","label":{ "en":"a2" },"type":"enum",    "isVariant":true,"isRequired":true,"inputHint":"SingleLine",
+          "values":[{"key":"a","label":"A"},{"key":"b","label":"B"}] },
         { "name":"a3","label":{ "en":"a3" },"type":"number",  "isVariant":true,"isRequired":true,"inputHint":"SingleLine" },
         { "name":"a4","label":{ "en":"a4" },"type":"money",   "isVariant":true,"isRequired":true,"inputHint":"SingleLine" },
         { "name":"a5","label":{ "en":"a5" },"type":"date",    "isVariant":true,"isRequired":true,"inputHint":"SingleLine" },
         { "name":"a6","label":{ "en":"a6" },"type":"time",    "isVariant":true,"isRequired":true,"inputHint":"SingleLine" },
         { "name":"a7","label":{ "en":"a7" },"type":"datetime","isVariant":true,"isRequired":true,"inputHint":"SingleLine" },
-
-        { "name":"a8","label":{ "en":"a8" },"type":"text",    "isVariant":true,"isRequired":true,"inputHint":"MultiLine" }
+        { "name":"a8","label":{ "en":"a8" },"type":"text",    "isVariant":true,"isRequired":true,"inputHint":"MultiLine" },
+        { "name":"a9","label":{ "en":"a9" },"type":"ltext",    "isVariant":true,"isRequired":true,"inputHint":"SingleLine" },
+        { "name":"a10","label":{ "en":"a10" },"type":"lenum",   "isVariant":true,"isRequired":true,"inputHint":"SingleLine",
+          "values":[{"key":"o","label":{"de":"Eins","en":"One"}},{"key":"t","label":{"de":"Zwei","en":"Two"}}] }
       ]
     }
     """
     And a file named "p.csv" with:
     """
-    productType,name,tax,variantId,a1,a2,a3,a4,a5,a6,a7,a8
-    all-types,product,myTax,0,text,a,3,"GBP 899",1970-01-01,11:11,1970-01-01T11:11:11,"multi\nline\ntext"
+    productType,name,tax,variantId,a1,a2,a3,a4,a5,a6,a7,a8,a9.de,a9.en,a10
+    all-types,product,myTax,0,text,a,3,"GBP 899",1970-01-01,11:11,1970-01-01T11:11:11,"multi\nline\ntext","Hallo",Hello,t
     """
     When I run `sphere types create @pt.json`
     Then the exit status should be 0

@@ -42,14 +42,14 @@ module Sphere
         j['productType']['id'].should eq 'abc'
       end
       it 'variant' do
-        rows = CSV.parse '123,a1Value,99,USD 999'
-        h2i = { 'sku' => 0, 'a1' => 1, 'a2' => 2, 'a3' => 3 }
+        rows = CSV.parse '123,a1Value,99,USD 999,unisex,hello,Hallo'
+        h2i = { 'sku' => 0, 'a1' => 1, 'a2' => 2, 'a3' => 3, 'a5' => 4, 'a4.en' => 5, 'a4.de' => 6 }
         pId = '123'
-        pt = { 'attributes' => [{ 'name' => 'a1' }, { 'name' => 'a2', 'type' => 'number' }, {'name' => 'a3', 'type' => 'money' }] }
+        pt = { 'attributes' => [{ 'name' => 'a1' }, { 'name' => 'a2', 'type' => 'number' }, {'name' => 'a3', 'type' => 'money' }, { 'name' => 'a4', 'type' => 'ltext' }, { 'name' => 'a5', 'type' => 'ltext' } ] }
         d = @prod.variant_json_data rows[0], h2i, pt
         j = JSON.parse d.to_json
         j['sku'].should eq '123'
-        j['attributes'].size.should eq 3
+        j['attributes'].size.should eq 5
         j['attributes'][0]['name'].should eq 'a1'
         j['attributes'][0]['value'].should eq 'a1Value'
         j['attributes'][1]['name'].should eq 'a2'
@@ -57,6 +57,11 @@ module Sphere
         j['attributes'][2]['name'].should eq 'a3'
         j['attributes'][2]['value']['currencyCode'].should eq 'USD'
         j['attributes'][2]['value']['centAmount'].should eq 999
+        j['attributes'][3]['name'].should eq 'a4'
+        j['attributes'][3]['value']['de'].should eq 'Hallo'
+        j['attributes'][3]['value']['en'].should eq 'hello'
+        j['attributes'][4]['name'].should eq 'a5'
+        j['attributes'][4]['value']['en'].should eq 'unisex'
       end
       it 'publish' do
         d = @prod.publish_product_json_command('abc', 42)

@@ -79,8 +79,8 @@ module Sphere
       $language_attributes = attribs
     end
 
-    def get_val(row, attr_name, h2i)
-      if $language_attributes.include? attr_name
+    def get_val(row, attr_name, h2i, lang_attribs = $language_attributes)
+      if lang_attribs.include? attr_name
         vals = {}
         h2i.each do |h,i|
           next unless h

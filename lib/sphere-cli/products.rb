@@ -631,6 +631,9 @@ module Sphere
     end
 
     def get_typed_val(row, attr_name, h2i, attr_type)
+      if attr_type == 'ltext'
+        return get_val row, attr_name, h2i, [attr_name]
+      end
       v = get_val row, attr_name, h2i
       return nil if v.nil?
       return v.to_i if attr_type == 'number'
