@@ -39,12 +39,12 @@ module Sphere
       end
       it 'nested attribute' do
         j = '{"price":{"amount":1000}}'
-        jsonValue(parse_JSON(j), %w'price amount').should eq "1000"
+        jsonValue(parse_JSON(j), %w'price amount').should eq 1000
       end
       it 'attribute within array' do
         j = '{"attributes":[{"name":"foo","value":1},{"n":"bar","v":2}]}'
-        jsonValue(parse_JSON(j), %w'attributes [name=foo/value]').should eq "1"
-        jsonValue(parse_JSON(j), %w'attributes [n=bar/v]').should eq "2"
+        jsonValue(parse_JSON(j), %w'attributes [name=foo/value]').should eq 1
+        jsonValue(parse_JSON(j), %w'attributes [n=bar/v]').should eq 2
       end
     end
     describe '#slugify' do

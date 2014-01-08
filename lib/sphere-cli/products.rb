@@ -183,16 +183,11 @@ module Sphere
         row << pt_id
         row << lang_val(p['name'])
         base_columns.each do |c|
-          v = p[c]
-          if v.class == Hash
-            row << lang_val(v)
-          else
-            row << v.to_s
-          end
+          row << extract_val(p[c])
         end
         row << add_categories(p)
         row << jsonValue(p, %w(masterVariant id))
-        row = row + add_variant_attributes(p['masterVariant'], variant_columns, variant_attributes_columns)
+        row = row + add_variant_attributes(p['masterVariant'], variant_columns, variant_attributes_columns, product_type)
         rows << row
         p['variants'].each do |v|
           row = ['','','',''] # 'action,id,productType,name'
@@ -201,7 +196,7 @@ module Sphere
           end
           row << '' # categories
           row << jsonValue(v, %w(id)) # variantId
-          row = row + add_variant_attributes(v, variant_columns, variant_attributes_columns)
+          row = row + add_variant_attributes(v, variant_columns, variant_attributes_columns, product_type)
           rows << row
         end
       end
@@ -213,16 +208,36 @@ module Sphere
       return header, rows
     end
 
-    def add_variant_attributes(v, variant_columns, variant_attributes_columns)
-      attribs = []
+    def add_variant_attributes(v, variant_columns, variant_attributes_columns, product_type)
+      pt_attribs = product_type ? product_type['attributes'] : []
+      attributes = []
       variant_columns.each do |c|
-        attribs << jsonValue(v, [c])
+        attributes << extract_val(jsonValue(v, [c]))
       end
       variant_attributes_columns.each do |c|
-        attribs << jsonValue(v, ['attributes', "[name=#{c}/value]"])
+        found = false
+        pt_attribs.each do |a|
+          if c == a['name']
+            attributes << extract_val(jsonValue(v, ['attributes', "[name=#{c}/value]"]), a['type'])
+            found = true
+          end
+        end
+        attributes << extract_val(jsonValue(v, ['attributes', "[name=#{c}/value]"])) unless found
       end
-      attribs << add_images(v)
-      attribs
+      attributes << add_images(v)
+      attributes
+    end
+
+    def extract_val(value, type = 'unkown')
+      if type == 'enum' or type == 'lenum'
+        value['key']
+      elsif type == 'money'
+        "#{value['currencyCode']} #{value['centAmount']}"
+      elsif type == 'ltext' or value.class == Hash
+        lang_val value
+      else
+        value.to_s
+      end
     end
 
     def add_categories(item)

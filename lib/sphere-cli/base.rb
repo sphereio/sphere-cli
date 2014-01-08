@@ -137,7 +137,7 @@ module Sphere
           value = value[attrName]
         end
       end
-      return value.to_s
+      value
     end
 
     def ask

@@ -39,7 +39,7 @@ Feature: Managing product types works
     And a file named "p.csv" with:
     """
     productType,name,tax,variantId,a1,a2,a3,a4,a5,a6,a7,a8,a9.de,a9.en,a10
-    all-types,product,myTax,0,text,a,3,"GBP 899",1970-01-01,11:11,1970-01-01T11:11:11,"multi\nline\ntext","Hallo",Hello,t
+    all-types,Product,myTax,0,text,a,3,"GBP 899",1970-01-01,11:11,1970-01-01T11:11:11,"multi\nline\ntext","Hallo",Hello,t
     """
     When I run `sphere types create @pt.json`
     Then the exit status should be 0
@@ -47,3 +47,7 @@ Feature: Managing product types works
     Then the exit status should be 0
     When I run `sphere products import p.csv`
     Then the exit status should be 0
+    When I run `sphere products export`
+    Then the exit status should be 0
+    And the stdout from "sphere products export" should match /^action,id,productType,name,slug,categories,variantId,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,images$/
+    And the stdout from "sphere products export" should match /^"",[a-z0-9-]+,[a-z0-9-]+,Product,product,"",1,text,a,3,GBP 899,1970-01-01,11:11,1970-01-01T11:11:11,multi\\nline\\ntext,Hello,t,""$/

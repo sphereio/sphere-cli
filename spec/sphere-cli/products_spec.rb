@@ -378,7 +378,7 @@ delete,123,,,
         h.to_csv.should eq "action,id,productType,name,categories,variantId,images\n"
         r.size.should be 1
         r[0].size.should be 7
-        r[0].to_csv.should match /"",abc,pt,myProd,"","",/
+        r[0].to_csv.should match /"",abc,pt,myProd,"",,""/
       end
       it 'product with attributes' do
           body = <<-eos
