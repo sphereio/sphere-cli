@@ -239,7 +239,7 @@ module Sphere
       d[:description] = desc if desc
       if column_index > root_index
         p_id = current_parents[column_index - 1]
-        d[:slug] = slug ? slug : lang_val("#{slugify(name)}-#{p_id}")
+        d[:slug] = slug ? slug : lang_val(slugify("#{name}-#{p_id}"))
         d[:parent] = { :id => p_id, :typeId => 'category' }
       end
       d.to_json
