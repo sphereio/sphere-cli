@@ -9,7 +9,7 @@ module Sphere
     describe '#list' do
       it 'no products' do
         Excon.stub(
-          { :method => :get, :path => '/api/p/products' },
+          { :method => :get, :path => '/api/p/products?locale=en' },
           { :status => 200, :body => '{"total":0}' })
 
         o, e = capture_outs { @prod.list({ :project => 'p' }, {}) }
@@ -17,7 +17,7 @@ module Sphere
       end
       it 'just works' do
         Excon.stub(
-          { :method => :get, :path => '/api/some-proj/products' },
+          { :method => :get, :path => '/api/some-proj/products?locale=en' },
           { :status => 200, :body => '{"total":2}' })
 
         expect { @prod.list({ :project => 'some-proj' }, {}) }.to_not raise_error
@@ -231,7 +231,7 @@ module Sphere
           { :method => :get, :path => '/api/myProject/products/types' },
           { :status => 200, :body => '[{"id":"123","name":"pt","attributes":[]}]' })
         Excon.stub(
-          { :method => :get, :path => '/api/myProject/products' },
+          { :method => :get, :path => '/api/myProject/products?locale=en' },
           { :status => 200, :body => '{"count":0,"offset":0,"total":0,"results":[]}' })
         Excon.stub(
           { :method => :get, :path => '/api/myProject/categories' },
@@ -370,7 +370,7 @@ delete,123,,,
     describe '#export_csv' do
       it 'simple product' do
         Excon.stub(
-          { :method => :get, :path => '/api/myProject/products' },
+          { :method => :get, :path => '/api/myProject/products?locale=en' },
           { :status => 200, :body => '{"count":1,"offset":0,"total":1,"results":[{"id":"abc","productType":{"id":"pt"},"name":{"en":"myProd"},"masterVariant":{"attributes":[],"images":[]},"categories":[],"variants":[]}]}' })
         @prod.fetch_all
         h,r = @prod.export_csv
@@ -567,7 +567,7 @@ delete,123,,,
 ], "facets":{}}
         eos
         Excon.stub(
-            { :method => :get, :path => '/api/myProject/products' },
+            { :method => :get, :path => '/api/myProject/products?locale=en' },
             { :status => 200, :body => body })
         @prod.fetch_all
         h,r = @prod.export_csv

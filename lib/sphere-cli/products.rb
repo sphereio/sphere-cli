@@ -35,7 +35,7 @@ module Sphere
 
     def list(options, global_options)
       project_key = get_project_key options
-      res = sphere.get products_list_url project_key
+      res = sphere.get "#{products_list_url project_key}?locale=#{language}"
       #sphere.ensure2XX "Can't get list of products"
       performJSONOutput global_options, res do |data|
         total = data['total']
@@ -78,8 +78,8 @@ module Sphere
       page_index = 0
       begin
         page_index += 1
-        url = products_list_url (@sphere_project_key)
-        url = url + "?page=#{page_index}" unless total == 0
+        url = "#{products_list_url @sphere_project_key}?locale=#{language}"
+        url = url + "&page=#{page_index}" unless total == 0
         res = sphere.get url
         #sphere.ensure2XX "Can't download products"
         data = parse_JSON res
