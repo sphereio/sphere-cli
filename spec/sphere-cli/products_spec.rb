@@ -368,6 +368,9 @@ delete,123,,,
       end
     end
     describe '#export_csv' do
+      it 'should fail because of unknown product type' do
+        expect { @prod.export_csv({ :product_type => 'non_existing_prod_type' }) }.to raise_error /The product type 'non_existing_prod_type' is unkown!/
+      end
       it 'simple product' do
         Excon.stub(
           { :method => :get, :path => '/api/myProject/products?locale=en' },

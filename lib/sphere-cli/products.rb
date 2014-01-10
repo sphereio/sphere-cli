@@ -101,7 +101,7 @@ module Sphere
       printStatusLine "Downloading products... Done, loaded #{pluralize total, 'product'} in #{"%4.2f" % duration} seconds.\n"
     end
 
-    def export_all
+    def export_all(options)
       printStatusLine "Processing #{pluralize @number_products, 'products'}... "
       start_time = Time.now
 
@@ -115,7 +115,7 @@ module Sphere
         # raw JSON, iterate over individual records and output in raw
         puts "[#{@products.map { |p| JSON.generate(p) }.join(',')}]"
       else
-        export_csv
+        export_csv options
       end
 
       duration = Time.now - start_time
@@ -144,7 +144,18 @@ module Sphere
       printStatusLine "Deleting products... Done, deleted #{pluralize size, 'product'} in #{"%4.2f" % duration} seconds\n"
     end
 
-    def export_csv
+    def export_csv(options = {})
+      only_pt = options[:product_type]
+      if only_pt
+        if @name2product_type.has_key? only_pt
+          only_pt = @name2product_type[only_pt]
+        elsif @id2product_type.has_key? only_pt
+          only_pt = @id2product_type[only_pt]
+        else
+          raise "The product type '#{only_pt}' is unkown!"
+        end
+      end
+
       base_columns = Set.new []
       variant_columns = Set.new []
       variant_attributes_columns = Set.new []
@@ -178,6 +189,9 @@ module Sphere
       @products.each do |p|
         pt_id = p['productType']['id']
         product_type = @id2product_type[pt_id]
+        if only_pt
+          next if product_type['id'] != only_pt['id']
+        end
         row = [''] # action
         row << p['id'].to_s
         row << pt_id
