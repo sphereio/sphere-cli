@@ -57,3 +57,26 @@ Feature: Managing catalogs
     When I run `sphere -j category export`
     Then the exit status should be 0
     And the output should match /Exporting categories... Done, 2 categories in [0-9.]+ seconds/
+
+  @wip
+  Scenario: Multi language import of categories
+    Given I am logged in and select a new project
+    And a file named "lang.csv" with:
+    """
+    rootCategory:de;en,subCategory
+    Sommer;summer,
+    ,Schuhe;shoes
+    """
+    When I run `sphere categories import lang.csv`
+    Then the exit status should be 0
+    And the output should match /Importing categories... Done, 2 categories created and 0 categories updated and in [0-9.]+ seconds/
+    When I run `sphere category --lang=de export`
+    Then the exit status should be 0
+    And the output should match /^action,id,rootCategory,category$/
+    And the output should match /^"",[a-z0-9-]+,Sommer$/
+    And the output should match /^"",[a-z0-9-]+,"",Schuhe$/
+    When I run `sphere category --lang=en export`
+    Then the exit status should be 0
+    And the output should match /^action,id,rootCategory,category$/
+    And the output should match /^"",[a-z0-9-]+,summer$/
+    And the output should match /^"",[a-z0-9-]+,"",shoes$/
