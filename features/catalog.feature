@@ -58,7 +58,6 @@ Feature: Managing catalogs
     Then the exit status should be 0
     And the output should match /Exporting categories... Done, 2 categories in [0-9.]+ seconds/
 
-  @wip
   Scenario: Multi language import of categories
     Given I am logged in and select a new project
     And a file named "lang.csv" with:

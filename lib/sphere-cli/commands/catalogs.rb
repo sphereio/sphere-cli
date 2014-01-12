@@ -18,13 +18,13 @@ command [:category, :categories] do |c|
    end
   end
 
+  c.arg_name 'lang'
+  c.flag [:lang], :desc => "Default language for import/export", :type => String, :default_value => 'en'
+
   c.desc 'Import categories from CSV'
   c.long_desc 'TODO'
   c.arg_name 'cvsFile'
   c.command :import do |import|
-    import.arg_name 'lang'
-    import.flag [:lang], :desc => "Default language for import", :type => String, :default_value => 'en'
-
     import.action do |global_options, options, args|
       project_key = get_project_key options
       set_language options
@@ -40,6 +40,7 @@ command [:category, :categories] do |c|
   c.command :export do |import|
     import.action do |global_options, options, args|
       project_key = get_project_key options
+      set_language options
       sphere.ensureLoggedIn
       sphere_catalogs = Sphere::Catalogs.new project_key
       sphere_catalogs.export

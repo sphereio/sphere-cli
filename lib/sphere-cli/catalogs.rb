@@ -9,6 +9,7 @@ module Sphere
 
     ACTIONS = [ nil, '', 'create','changeName' ] # TODO: add delete
     LANGUAGE_HEADERS = [ 'description', 'slug' ]
+    VALUES_DELIM = ';'
 
     def initialize(project_key)
       @sphere_project_key = project_key
@@ -71,6 +72,7 @@ module Sphere
     def to_text
       categories2text @categories, 0
     end
+
     def categories2text(cats, level)
       rows = []
       return rows unless cats
@@ -136,15 +138,23 @@ module Sphere
     def validate_rows(csv_input)
       header, *rows = *csv_input
 
-      data = { :errors => [], :rows => [], :actions => [], :ids => [], :original_indexes => [] }
+      data = { :errors => [], :rows => [], :actions => [], :ids => [], :original_indexes => [], :languages => [] }
 
       root_index = -1
       h2i = {}
       header.each_with_index do |h,i|
         h2i[h] = i
-        root_index = i if h == 'rootCategory'
+        root_index = i if not h.nil? and h.start_with? 'rootCategory'
       end
-      data[:errors] << "[header row] There is no 'rootCategory' column." if root_index < 0
+      languages = [$languages]
+      if root_index < 0
+        data[:errors] << "[header row] There is no 'rootCategory' column."
+      else
+        h = header[root_index]
+        name, langs = h.split ':' if h
+        languages = langs.split VALUES_DELIM if langs
+      end
+      data[:languages] = languages
       data[:root_index] = root_index
       data[:errors] << '[row 2] There is no root category.' unless rows[0][root_index]
 
@@ -184,10 +194,10 @@ module Sphere
     end
 
     def import_data(data)
-      import_rows data[:rows], data[:actions], data[:ids], data[:h2i], data[:root_index], data[:original_indexes]
+      import_rows data[:rows], data[:actions], data[:ids], data[:h2i], data[:root_index], data[:original_indexes], data[:languages]
     end
 
-    def import_rows(rows, actions, ids, h2i, root_index, original_indexes)
+    def import_rows(rows, actions, ids, h2i, root_index, original_indexes, languages)
       current_parents = []
       max = rows.size
       creations = 0
@@ -203,7 +213,7 @@ module Sphere
           end
           if action == 'create'
             creations += 1
-            j = create_json_data cell, row, h2i, current_parents, column_index, root_index
+            j = create_json_data cell, row, h2i, current_parents, column_index, root_index, original_indexes[i], languages
             url = category_create_url @sphere_project_key
             res = sphere.post url, j
             #sphere.ensure2XX "[row #{original_indexes[i]}] Problem on category creation"
@@ -232,17 +242,34 @@ module Sphere
       d.to_json
     end
 
-    def create_json_data(name, row, h2i, current_parents, column_index, root_index)
+    def create_json_data(cell, row, h2i, current_parents, column_index, root_index, row_index, languages)
       slug = get_val row, 'slug', h2i
       desc = get_val row, 'description', h2i
-      d = { :name => lang_val(name), :slug => slug ? slug : lang_val(slugify(name)) }
+      d = cat_names_and_slugs cell, slug, languages, row_index, column_index
       d[:description] = desc if desc
       if column_index > root_index
         p_id = current_parents[column_index - 1]
-        d[:slug] = slug ? slug : lang_val(slugify("#{name}-#{p_id}"))
+        d[:slug] = slug ? slug : lang_val(slugify("#{cell}-#{p_id}"))
         d[:parent] = { :id => p_id, :typeId => 'category' }
       end
       d.to_json
+    end
+
+    def cat_names_and_slugs(cell, slug, languages, row_index, column_index)
+      lang_names = cell.split VALUES_DELIM
+      raise "[row #{original_index}, column #{column_index}] This cell does not contain the desired languages" if languages.size != lang_names.size
+      d = { :name => '', slug => ''}
+      if languages.size == 1
+        d[:name] = lang_val cell
+        d[:slug] = slug ? slug : lang_val(slugify(cell))
+        return d
+      end
+      d[:slug] = slug if slug
+      languages.each_with_index do |l,i|
+        d[:name][l] = lang_names[i]
+        d[:slug][l] = slugify(lang_names[i] + l) unless slug
+      end
+      d
     end
   end
 
