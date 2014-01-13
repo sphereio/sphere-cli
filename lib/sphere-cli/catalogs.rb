@@ -258,13 +258,18 @@ module Sphere
     def cat_names_and_slugs(cell, slug, languages, row_index, column_index)
       lang_names = cell.split VALUES_DELIM
       raise "[row #{original_index}, column #{column_index}] This cell does not contain the desired languages" if languages.size != lang_names.size
-      d = { :name => '', slug => ''}
+      d = {}
       if languages.size == 1
         d[:name] = lang_val cell
         d[:slug] = slug ? slug : lang_val(slugify(cell))
         return d
       end
-      d[:slug] = slug if slug
+      d[:name] = {}
+      if slug
+        d[:slug] = slug
+      else
+        d[:slug] = {}
+      end
       languages.each_with_index do |l,i|
         d[:name][l] = lang_names[i]
         d[:slug][l] = slugify(lang_names[i] + l) unless slug
