@@ -95,4 +95,4 @@ Feature: Managing product types works
     And the output from "sphere products --product_type=cli-product-type1 export" should not contain "P2"
     When I run `sphere products --product_type=cli-product-type2 export`
     Then the exit status should be 0
-    And the output from "sphere products --product_type=cli-product-type1 export" should not contain "P1"
+    And the output from "sphere products --product_type=cli-product-type2 export" should not contain "P1"
