@@ -96,3 +96,29 @@ Feature: Managing product types works
     When I run `sphere products --product_type=cli-product-type2 export`
     Then the exit status should be 0
     And the output from "sphere products --product_type=cli-product-type2 export" should not contain "P1"
+  
+  @wip
+  Scenario: Create an isVariant: true attribute and check whether it is accepted correctly
+    Given I am logged in and select a new project
+    And a file named "pt.json" with:
+    """
+    {
+      "name":"isVariantCheck",
+      "description":"Blabla",
+      "attributes":[
+        { "name":"a1","label":{ "en":"a1" },"type":"text","isVariant":true,"isRequired":false,"inputHint":"SingleLine" }
+      ]
+    }
+    """
+    And a file named "p.csv" with:
+    """
+    productType,name,tax,variantId,a1
+    isVariantCheck,Product,myTax,0,text
+    ,,,1,text
+    """
+    When I run `sphere types create @pt.json`
+    Then the exit status should be 0
+    When I run `sphere tax create`
+    Then the exit status should be 0
+    When I run `sphere products import p.csv`
+    Then the exit status should be 1
