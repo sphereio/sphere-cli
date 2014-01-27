@@ -505,11 +505,15 @@ module Sphere
       end
 
       progress = ProgressBar.create(:title => "Importing images", :total => product_data.size)
-      Parallel.each(product_data, :in_threads => 1, :finish => lambda { |x,y| progress.increment }) do |data|
+      threads = @external_images ? @global_options[:para] : 1 # no parallel image resizing in MC
+      Parallel.each(product_data, :in_threads => threads, :finish => lambda { |x,y| progress.increment }) do |data|
         img = data[:i_data]
         productId2version = {}
         if img[:images].size > 0
           id = img[:id]
+          # we do only one image after each other
+          # - in case of external we don't support multiple images
+          # - in case of CDN upload, we don't want to kill the MC
           img[:images].each_slice(1) do |image|
             d = { :id => id, :images => image }
             if not @external_images
@@ -528,11 +532,11 @@ module Sphere
                 :variantId => image[0][:variantId],
                 :image => {
                   :url => image[0][:url],
-# TODO                  label => image[0][:label],
                   :dimensions => { :w => 0, :h => 0 }
                 }
               }]
             }
+            data[:actions][0][:label] = image[0][:label] if image[0][:label]
             res = sphere.api_post @sphere_project_key, url, data.to_json
             json = JSON.parse res
             productId2version[id] = json['version']
