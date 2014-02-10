@@ -20,6 +20,10 @@ module Sphere
       FileUtils.mkdir_p @sphere_folder unless Dir.exists? @sphere_folder
     end
 
+    def delete_empty_folder
+      FileUtils.rmdir @sphere_folder if Dir.exists? @sphere_folder
+    end
+
     def save_user_info user_name
       save_to_file @user_file, user_name
     end

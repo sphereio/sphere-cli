@@ -7,8 +7,8 @@ command :code do |c|
   c.desc 'Create a new sphere code folder using one of the provided templates'
   c.command [:new, :get] do |new|
     new.action do |global_options,options,args|
-      t = download.download_snowflake_template # TODO: let user decide between which template to download
-      code.useTemplate t
+      folder.delete_empty_folder
+      system('git clone https://github.com/commercetools/sphere-snowflake.git .')
     end
   end
 
@@ -26,8 +26,7 @@ command :code do |c|
   c.desc 'Run the code'
   c.command :run do |run|
     run.action do |global_options,options,args|
-      system('chmod 0755 sbt')
-      system('./sbt')
+      system('./sbt run')
     end
   end
 
