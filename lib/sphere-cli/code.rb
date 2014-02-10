@@ -42,17 +42,17 @@ module Sphere
       printStatusLine "Configuring application via '#{fn}'... "
       c = File.read fn
       File.open fn, 'w' do |file|
-        c.gsub!(/^sphere.project=.*$/, "sphere.project=\"#{json['key']}\"")
+        c.gsub!(/^sphere.project.*$/, "sphere.project=\"#{json['key']}\"")
         # TODO: let the user decide which client to use.
-        c.gsub!(/^sphere.clientId=.*$/, "sphere.clientId=\"#{json['clients'][0]['id']}\"")
-        c.gsub!(/^sphere.clientSecret=.*$/, "sphere.clientSecret=\"#{json['clients'][0]['secret']}\"")
+        c.gsub!(/^sphere.clientId.*$/, "sphere.clientId=\"#{json['clients'][0]['id']}\"")
+        c.gsub!(/^sphere.clientSecret.*$/, "sphere.clientSecret=\"#{json['clients'][0]['secret']}\"")
 
         if @server_url == 'https://admin.sphere-ci.cloud.commercetools.de'
-          c.gsub!(/^sphere.core=.*$/, 'sphere.core="https://api.sphere-ci.cloud.commercetools.de:11999"')
-          c.gsub!(/^sphere.auth=.*$/, 'sphere.auth="https://auth.sphere-ci.cloud.commercetools.de:7776"')
+          c.gsub!(/^sphere.core.*$/, 'sphere.core="https://api.sphere-ci.cloud.commercetools.de:11999"')
+          c.gsub!(/^sphere.auth.*$/, 'sphere.auth="https://auth.sphere-ci.cloud.commercetools.de:7776"')
         elsif @server_url == 'https://admin.escemo.com'
-          c.gsub!(/^sphere.core=.*$/, 'sphere.core="https://api.escemo.com"')
-          c.gsub!(/^sphere.auth=.*$/, 'sphere.auth="https://auth.escemo.com"')
+          c.gsub!(/^sphere.core.*$/, 'sphere.core="https://api.escemo.com"')
+          c.gsub!(/^sphere.auth.*$/, 'sphere.auth="https://auth.escemo.com"')
         end
         file.puts c
       end
