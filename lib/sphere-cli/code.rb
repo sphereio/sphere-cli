@@ -38,6 +38,7 @@ module Sphere
 
     def configure json
       fn = 'conf/application.conf'
+      raise "Can't find config file: #{fn}" unless File.exist? fn
       printStatusLine "Configuring application via '#{fn}'... "
       c = File.read fn
       File.open fn, 'w' do |file|

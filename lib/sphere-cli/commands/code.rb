@@ -26,7 +26,8 @@ command :code do |c|
   c.desc 'Run the code'
   c.command :run do |run|
     run.action do |global_options,options,args|
-      system('play run')
+      system('chmod 0755 sbt')
+      system('./sbt')
     end
   end
 
