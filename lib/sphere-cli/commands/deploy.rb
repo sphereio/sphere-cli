@@ -1,4 +1,4 @@
-desc 'Dploy your SPHERE.IO frontend to one of the cloud providers'
+desc 'Deploy your SPHERE.IO frontend to one of the cloud providers'
 command :deploy do |c|
 
   c.desc 'Deploy to heroku'
