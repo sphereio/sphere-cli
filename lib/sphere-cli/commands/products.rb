@@ -16,54 +16,6 @@ command [:product, :products] do |c|
    end
   end
 
-  c.desc 'Create a product'
-  c.long_desc 'Create a product (run in a configured code folder or provide the project key)'
-  c.arg_name 'JSON/filename'
-  c.command :create do |create|
-    create.action do |global_options,options,args|
-      sphere.ensureLoggedIn
-      Sphere::Products.new(nil, nil).create args, options
-   end
-  end
-
-  c.arg_name 'lang'
-  c.flag [:lang], :desc => "Language to use on import/export", :type => String, :default_value => 'en'
-
-  c.desc 'Export products'
-  c.long_desc 'Export the products into a CSV file (run in a configured code folder or provide the project key)'
-  c.command [:export] do |export|
-    export.arg_name 'product_type'
-    export.flag [:product_type], :desc => "Product type to export products for"
-
-    export.action do |global_options,options,args|
-      sphere.ensureLoggedIn
-      project_key = get_project_key options
-      set_language options
-      sphere_products = Sphere::Products.new project_key, global_options
-      sphere_products.fetch_all
-      sphere_products.export_all options
-    end
-  end
-
-  c.desc 'Import products'
-  c.long_desc 'Import products from a CSV file (run in a configured code folder or provide the project key)'
-  c.arg_name 'filename'
-  c.command [:import] do |import|
-    import.arg_name 'external_images'
-    import.switch [:external_images], :desc => "Don't import images, reference to external URLs", :negatable => false
-
-    import.action do |global_options,options,args|
-      sphere.ensureLoggedIn
-      project_key = get_project_key options
-      set_language options
-      input = get_input args
-      sphere_products = Sphere::Products.new project_key, global_options
-      sphere_products.set_external_images options
-      sphere_products.fetch_all
-      sphere_products.import input
-    end
-  end
-
   c.desc 'Delete products'
   c.long_desc 'Delete all products in your prodject. Can not be undone'
   c.command [:delete] do |delete|
