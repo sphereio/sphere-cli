@@ -70,10 +70,8 @@ task :perform_release do
   puts "Commit changes to version.rb"
   sh "git commit #{file} -m '[automation] Bump release version to #{release_version}'."
 
-  puts "rake release..."
-  Rake::Task["release"].execute
+  sh 'rake do_rake_release'
 
-  file = 'lib/sphere-cli/version.rb'
   version_file_content = "module Sphere\n  VERSION = '#{next_version}'\nend"
   File.open(file, 'w') { |f| f.puts version_file_content }
 
@@ -82,6 +80,10 @@ task :perform_release do
   sh "git push origin master"
 end
 
+task :do_rake_release do
+  puts "rake release..."
+  Rake::Task["release"].execute
+end
 
 ### package as pkg - works on Mac OS only!
 
