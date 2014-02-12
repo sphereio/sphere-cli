@@ -140,6 +140,10 @@ module Sphere
       value
     end
 
+    def command?(command)
+      system("which #{command} > /dev/null 2>&1")
+    end
+
     def ask
       $stdin.gets.to_s.strip
     end
