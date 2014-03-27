@@ -229,21 +229,24 @@ Sommer,Women,Shirts,T-Shirts,
             { :status => 200, :body => '{}' })
 
           h, r = @cat.export
-          h.size.should be 3
+          h.size.should be 5
           r.size.should be 0
         end
         it 'some categories' do
           Excon.stub(
             { :method => :get, :path => '/api/myProject/categories' },
-            { :status => 200, :body => '[{"subCategories":[],"id":"1","name":{"en":"myRoot"}},{"subCategories":[{"subCategories":[],"id":"2-1","name":{"en":"subcategory"}}],"id":"2","name":{"en":"myRoot-2"}}]' })
+            { :status => 200, :body => '[{"subCategories":[],"id":"1","name":{"en":"myRoot"},"slug":{"en":"f-o-o"},"description":{"en":"foo"}}' +
+              ',{"subCategories":[{"subCategories":[],"id":"2-1","name":{"en":"subcategory"},"slug":{"en":"b-a-r"},"description":{"en":"bar"}}]' +
+              ',"id":"2","name":{"en":"myRoot-2"},"slug":{"en":"nice-url"},"description":{"en":"baz"}}]' })
 
           h, r = @cat.export
-          h.size.should be 4
-          h.to_csv.should eq "action,id,rootCategory,category\n"
+          h.size.should be 6
+          h.to_csv.should eq "action,id,description,slug,rootCategory,category\n"
           r.size.should be 3
-          r[0].to_csv.should match /"",1,myRoot/
-          r[1].to_csv.should match /"",2,myRoot-2/
-          r[2].to_csv.should match /"",2-1,"",subcategory/
+          puts r
+          r[0].to_csv.should match /"",1,foo,f-o-o,myRoot/
+          r[1].to_csv.should match /"",2,baz,nice-url,myRoot-2/
+          r[2].to_csv.should match /"",2-1,bar,b-a-r,"",subcategory/
 
           @cat.fill_maps
           @cat.id2version.size.should be 3
