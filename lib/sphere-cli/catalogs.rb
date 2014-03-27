@@ -56,7 +56,7 @@ module Sphere
 
       @max_level = 1
       rows = to_text
-      header = %w'action id rootCategory'
+      header = %w'action id description slug rootCategory'
       header = header + (['category'] * (@max_level - 1))
 
       puts header.to_csv
@@ -80,6 +80,8 @@ module Sphere
       cats.each do |cat|
         row = [''] # action
         row << cat['id']
+        row << lang_val(cat['description'])
+        row << lang_val(cat['slug'])
         row = row + ([''] * level) # put category in right column
         row << lang_val(cat['name'])
         rows << row
