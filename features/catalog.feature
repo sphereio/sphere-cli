@@ -17,18 +17,18 @@ Feature: Managing catalogs
     And the output should match /Importing categories... Done, 11 categories created and 0 categories updated and in [0-9.]+ seconds/
     When I run `sphere category export`
     Then the exit status should be 0
-    And the output should match /^action,id,rootCategory,category,category,category$/
-    And the output should match /^"",[a-z0-9-]+,Winter$/
-    And the output should match /^"",[a-z0-9-]+,"",Men$/
-    And the output should match /^"",[a-z0-9-]+,"",Women$/
-    And the output should match /^"",[a-z0-9-]+,"","",Gloves$/
-    And the output should match /^"",[a-z0-9-]+,"","",Jackets$/
-    And the output should match /^"",[a-z0-9-]+,"","","",Blue Jackets$/
-    And the output should match /^"",[a-z0-9-]+,Sommer$/
-    And the output should match /^"",[a-z0-9-]+,"",Women$/
-    And the output should match /^"",[a-z0-9-]+,"","",Shoes$/
-    And the output should match /^"",[a-z0-9-]+,"","","",Slipper$/
-    And the output should match /^"",[a-z0-9-]+,Fall$/
+    And the output should match /^action,id,description,slug,rootCategory,category,category,category$/
+    And the output should match /^"",[a-z0-9-]+,.*,.*,Winter$/
+    And the output should match /^"",[a-z0-9-]+,.*,.*,"",Men$/
+    And the output should match /^"",[a-z0-9-]+,.*,.*,"",Women$/
+    And the output should match /^"",[a-z0-9-]+,.*,.*,"","",Gloves$/
+    And the output should match /^"",[a-z0-9-]+,.*,.*,"","",Jackets$/
+    And the output should match /^"",[a-z0-9-]+,.*,.*,"","","",Blue Jackets$/
+    And the output should match /^"",[a-z0-9-]+,.*,.*,Sommer$/
+    And the output should match /^"",[a-z0-9-]+,.*,.*,"",Women$/
+    And the output should match /^"",[a-z0-9-]+,.*,.*,"","",Shoes$/
+    And the output should match /^"",[a-z0-9-]+,.*,.*,"","","",Slipper$/
+    And the output should match /^"",[a-z0-9-]+,.*,.*,Fall$/
     And the output should match /Exporting categories... Done, 11 categories in [0-9.]+ seconds/
     When I run `sphere categories`
     Then the exit status should be 0
@@ -36,7 +36,7 @@ Feature: Managing catalogs
     And the output should match /^Sommer:\ [a-z0-9-]+$/
     And the output should match /^Fall:\ [a-z0-9-]+$/
     When I write the output from "sphere category export" to file "update.csv"
-    And I change /""(,[a-z0-9-]+,"","",)Gloves/ to "changeName\1Handschuhe" in file "update.csv"
+    And I change /""(,[a-z0-9-]+,.*,.*,"","",)Gloves/ to "changeName\1Handschuhe" in file "update.csv"
     And I run `sphere categories import update.csv`
     Then the exit status should be 0
     When I run `sphere categories export`
@@ -62,20 +62,20 @@ Feature: Managing catalogs
     Given I am logged in and select a new project
     And a file named "lang.csv" with:
     """
-    rootCategory:de;en,subCategory
-    Sommer;summer,
-    ,Schuhe;shoes
+    slug.de,slug.en,rootCategory:de;en,subCategory
+    sommer,summer,Sommer;summer,
+    schuhe,shoes,,Schuhe;shoes
     """
     When I run `sphere categories import lang.csv`
     Then the exit status should be 0
     And the output should match /Importing categories... Done, 2 categories created and 0 categories updated and in [0-9.]+ seconds/
     When I run `sphere category --lang=de export`
     Then the exit status should be 0
-    And the output should match /^action,id,rootCategory,category$/
-    And the output should match /^"",[a-z0-9-]+,Sommer$/
-    And the output should match /^"",[a-z0-9-]+,"",Schuhe$/
+    And the output should match /^action,id,description,slug,rootCategory,category$/
+    And the output should match /^"",[a-z0-9-]+,.*,sommer,Sommer$/
+    And the output should match /^"",[a-z0-9-]+,.*,schuhe,"",Schuhe$/
     When I run `sphere category --lang=en export`
     Then the exit status should be 0
-    And the output should match /^action,id,rootCategory,category$/
-    And the output should match /^"",[a-z0-9-]+,summer$/
-    And the output should match /^"",[a-z0-9-]+,"",shoes$/
+    And the output should match /^action,id,description,slug,rootCategory,category$/
+    And the output should match /^"",[a-z0-9-]+,.*,summer,summer$/
+    And the output should match /^"",[a-z0-9-]+,.*,shoes,"",shoes$/
