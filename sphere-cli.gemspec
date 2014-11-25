@@ -17,10 +17,9 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('rdoc')
   s.add_development_dependency('aruba')
   s.add_dependency('json')
-  s.add_dependency('excon', '0.16.2')
+  s.add_dependency('excon', '0.41.0')
   s.add_dependency('multipart-post', '1.2.0')
   s.add_dependency('gli', '2.5.4')
-  s.add_dependency('ruby-progressbar', '1.0.2')
-  s.add_dependency('ruby-progressbar', '1.0.2')
+  s.add_dependency('ruby-progressbar', '1.7.0')
   s.add_dependency('parallel', '0.5.19')
 end
