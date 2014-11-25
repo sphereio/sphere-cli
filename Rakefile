@@ -38,7 +38,7 @@ CLEAN << RSPEC_JUNIT_RESULTS
 RSpec::Core::RakeTask.new(:rspec) do |t|
   t.rspec_opts = [ '--format', 'html', '-o', RSPEC_HTML_RESULTS,
                    '-r', 'rspec_junit_formatter', '--format', 'RspecJunitFormatter', '-o', RSPEC_JUNIT_RESULTS,
-                   '--format', 'nested', '--color', '--tag', '~skip' ]
+                   '--format', 'progress', '--color', '--tag', '~skip' ]
 end
 task :default => :rspec
 
