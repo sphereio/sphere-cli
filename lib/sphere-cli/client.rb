@@ -113,7 +113,6 @@ module Sphere
 
     def post(url, body, expects=[200, 201])
       res = @connection.post( :expects => expects,
-                              :connect_timeout => 300,
                               :read_timeout => 300,
                               :path => url,
                               :headers => {
@@ -145,7 +144,6 @@ module Sphere
     def api_post(project_key, url, body, expects=[200, 201])
       auth_token = get_token project_key
       res = @api_connection.post( :expects => expects,
-                                  :connect_timeout => 300,
                                   :read_timeout => 300,
                                   :path => url,
                                   :headers => {
