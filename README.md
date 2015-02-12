@@ -1,37 +1,8 @@
 sphere-cli
 ==========
 
-The Command Line Interface (CLI) to [SPHERE.IO](http://sphere.io)
-
-Have a look at the [developer documentation](http://dev.sphere.io/CLI.html)
-
-## Development
-
-[![Build Status](https://travis-ci.org/sphereio/sphere-cli.png)](https://travis-ci.org/sphereio/sphere-cli)
-
-Getting started by using `bundler` to get all necessary dependencies:
-```
-gem install bundler
-bundle
-```
-
-### Run tests
-
-Sphere CLI provides two kind of tests:
-- RSpec based tests that mock the backend
-- Acceptance test using cucumber/aruba
-
-```
-rake rspec # unit tests
-rake cucumber # acceptance test
-```
-
-#### Run tests automatically on code changes
-
-Sphere CLI uses guard to execute rspec tests and some cucumber features to run everytime you save some files.
-Execute the following command in a separate terminal:
-```
-bundle exec guard
-```
-
-Guard will only execute those cucumber features that do not run against the backend.
+THIS TOOL IS DEPRECATED. PLEASE USE:
+- [SPHERE.IO impex](https://impex.sphere.io) to import/export data into you SPHERE.IO project
+- [SPHERE.IO playground](https://impex.sphere.io/playground) to interact with the API
+- [sphere-node-product-csv-sync](https://github.com/sphereio/sphere-node-product-csv-sync) to manage your products via the command line
+- [Deployent Button](https://github.com/commercetools/sphere-snowflake#deployment) the deployment button to get your shop running on Heroku	
